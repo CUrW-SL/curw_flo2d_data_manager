@@ -178,7 +178,7 @@ if __name__=="__main__":
             check_time_format(time=end_time, model=flo2d_model)
 
 
-        raincell_file_path = os.path.join(r"D:\raincells",
+        raincell_file_path = os.path.join(r"D:\raincell",
                 'RAINCELL_{}_{}_{}.DAT'.format(flo2d_model, start_time, end_time).replace(' ', '_').replace(':', '-'))
 
         if not os.path.isfile(raincell_file_path):

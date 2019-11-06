@@ -139,9 +139,6 @@ if __name__ == "__main__":
             elif opt in ("-e", "--end_time"):
                 end_time = arg.strip()
 
-        # os.chdir(r"D:\inflow")
-        # os.system(r"venv\Scripts\activate")
-
         # Load config details and db connection params
         config = json.loads(open('config_150.json').read())
 
