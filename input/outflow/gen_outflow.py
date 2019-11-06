@@ -105,7 +105,7 @@ def prepare_outflow_250(outflow_file_path, start, end, tide_id):
 
         write_to_file(outflow_file_path, data=outflow)
 
-        tail_file = open("tail_250.txt", "r")
+        tail_file = open(os.path.join("input", "outflow", "tail_250.txt"), "r")
         tail = tail_file.read()
         tail_file.close()
 
@@ -157,7 +157,7 @@ def prepare_outflow_150(outflow_file_path, start, end, tide_id):
 
         write_to_file(outflow_file_path, data=outflow)
 
-        tail_file = open("tail_150.txt", "r")
+        tail_file = open(os.path.join("input", "outflow", "tail_150.txt"), "r")
         tail = tail_file.read()
         tail_file.close()
 
@@ -221,7 +221,7 @@ if __name__ == "__main__":
                 end_time = arg.strip()
 
         # Load config details and db connection params
-        config = json.loads(open('db_config.json').read())
+        config = json.loads(open(os.path.join("input", "outflow", "config.json")).read())
 
         output_dir = read_attribute_from_config_file('output_dir', config)
         file_name = read_attribute_from_config_file('output_file_name', config)

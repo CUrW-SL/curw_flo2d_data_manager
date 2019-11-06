@@ -203,7 +203,7 @@ def save_forecast_timeseries_to_db(pool, timeseries, run_date, run_time, opts, f
 def usage():
     usageText = """
     Usage: .\extract_water_level.py [-m flo2d_XXX] [-s "YYYY-MM-DD HH:MM:SS"] [-r "YYYY-MM-DD HH:MM:SS"] 
-    [-d "D:\inflow\flo2d_hourly\output"]
+    [-d "D:\\inflow\\flo2d_hourly\\output"]
 
     -h  --help          Show usage
     -m  --model         FLO2D model (e.g. flo2d_250, flo2d_150).
@@ -221,12 +221,7 @@ if __name__ == "__main__":
     {
       "HYCHAN_OUT_FILE": "HYCHAN.OUT",
       "TIMDEP_FILE": "TIMDEP.OUT",
-      "output_dir": "/home/shadhini/dev/repos/shadhini/flo2d_data_pusher/2019-05-24_Kelani",
-    
-      "run_date": "2019-05-24",
-      "run_time": "00:00:00",
-      "ts_start_date": "2019-05-24",
-      "ts_start_time": "00:00:00",
+      
       "utc_offset": "",
     
       "sim_tag": "manual_run",
@@ -268,7 +263,7 @@ if __name__ == "__main__":
             elif opt in ("-d", "--dir"):
                 output_dir = arg.strip()
 
-        config = json.loads(open('config.json').read())
+        config = json.loads(open(os.path.join('output', 'config.json')).read())
 
         # flo2D related details
         HYCHAN_OUT_FILE = read_attribute_from_config_file('HYCHAN_OUT_FILE', config, True)
