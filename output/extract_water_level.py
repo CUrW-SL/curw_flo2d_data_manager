@@ -299,10 +299,10 @@ if __name__ == "__main__":
 
         output_dir = output_dir
 
-        run_date = in_run_time.striftime("%Y-%m-%d")
-        run_time = in_run_time.striftime("%H:%M:%S")
-        ts_start_date = in_ts_start_time.striftime("%Y-%m-%d")
-        ts_start_time = in_ts_start_time.striftime("%H:%M:%S")
+        run_date = in_run_time.strftime("%Y-%m-%d")
+        run_time = in_run_time.strftime("%H:%M:%S")
+        ts_start_date = in_ts_start_time.strftime("%Y-%m-%d")
+        ts_start_time = in_ts_start_time.strftime("%H:%M:%S")
 
         utc_offset = read_attribute_from_config_file('utc_offset', config, False)
         if utc_offset is None:
