@@ -1,4 +1,4 @@
-#!"C:\curw_flo2d_data_manager\venv\Scripts\python.exe"
+#!"D:\curw_flo2d_data_manager\venv\Scripts\python.exe"
 import pymysql
 import getopt
 from datetime import datetime, timedelta

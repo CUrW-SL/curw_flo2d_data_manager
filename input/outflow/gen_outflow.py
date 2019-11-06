@@ -1,4 +1,4 @@
-#!"C:\curw_flo2d_data_manager\venv\Scripts\python.exe"
+#!"D:\curw_flo2d_data_manager\venv\Scripts\python.exe"
 import pymysql
 from datetime import datetime, timedelta
 import traceback
@@ -259,8 +259,6 @@ if __name__ == "__main__":
             print("{} completed preparing outflow".format(datetime.now()))
         else:
             print('Outflow file already in path : ', outflow_file_path)
-
-        # os.system(r"deactivate")
 
     except Exception:
         traceback.print_exc()
