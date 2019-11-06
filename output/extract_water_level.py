@@ -49,7 +49,7 @@ def check_time_format(time):
             print("Minutes should be always multiples of 15")
             exit(1)
 
-        return True
+        return time
     except Exception:
         print("Time {} is not in proper format".format(time))
         exit(1)
@@ -294,8 +294,8 @@ if __name__ == "__main__":
             print("Flo2d model should be either \"flo2d_250\" or \"flo2d_150\"")
             exit(1)
 
-        check_time_format(in_ts_start_time)
-        check_time_format(in_run_time)
+        in_ts_start_time = check_time_format(in_ts_start_time)
+        in_run_time = check_time_format(in_run_time)
 
         output_dir = output_dir
 
