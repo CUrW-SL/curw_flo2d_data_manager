@@ -204,13 +204,13 @@ def save_forecast_timeseries_to_db(pool, timeseries, run_date, run_time, opts, f
 def usage():
     usageText = """
     Usage: .\extract_water_level.py [-m flo2d_XXX] [-s "YYYY-MM-DD HH:MM:SS"] [-r "YYYY-MM-DD HH:MM:SS"] 
-    [-d "D:\\inflow\\flo2d_hourly\\output"]
+    [-d "C:\udp_150\2019-09-23"]
 
     -h  --help          Show usage
     -m  --model         FLO2D model (e.g. flo2d_250, flo2d_150).
     -s  --ts_start_time Timeseries start time (e.g: "2019-06-05 23:00:00").
     -r  --run_time      Run time (e.g: "2019-06-05 23:00:00").
-    -d  --dir           Output directory (e.g. "D:\inflow\flo2d_hourly\output")
+    -d  --dir           Output directory (e.g. "C:\udp_150\2019-09-23")
     """
     print(usageText)
 
