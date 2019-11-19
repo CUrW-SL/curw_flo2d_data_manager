@@ -127,6 +127,10 @@ def create_dir_if_not_exists(path):
 
 def usage():
     usageText = """
+    -------------------------------------
+    Prepare raincell for Flo2D 250 & 150
+    -------------------------------------
+    
     Usage: .\gen_raincell.py [-m flo2d_XXX][-s "YYYY-MM-DD HH:MM:SS"] [-e "YYYY-MM-DD HH:MM:SS"]
     
     -h  --help          Show usage

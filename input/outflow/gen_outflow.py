@@ -184,7 +184,10 @@ def create_dir_if_not_exists(path):
 
 def usage():
     usageText = """
-    Usage: .\gen_outflow.py [-m flo2d_XXX] [-s "YYYY-MM-DD HH:MM:SS"] [-e "YYYY-MM-DD HH:MM:SS"]
+    ------------------------------------------
+    Prepare outflow for Flo2D 250 & Flo2D 150
+    ------------------------------------------
+    Usage: .\input\outflow\gen_outflow.py [-m flo2d_XXX] [-s "YYYY-MM-DD HH:MM:SS"] [-e "YYYY-MM-DD HH:MM:SS"]
 
     -h  --help          Show usage
     -m  --model         FLO2D model (e.g. flo2d_250, flo2d_150). Default is flo2d_250.
