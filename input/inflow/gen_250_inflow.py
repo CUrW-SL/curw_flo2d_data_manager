@@ -146,7 +146,6 @@ if __name__ == "__main__":
 
     try:
 
-        print("started creating inflow")
         start_time = None
         end_time = None
 

@@ -201,7 +201,6 @@ if __name__ == "__main__":
 
     try:
 
-        print("started creating outflow")
         start_time = None
         end_time = None
         flo2d_model = None

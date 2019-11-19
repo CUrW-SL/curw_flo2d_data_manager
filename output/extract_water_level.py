@@ -244,7 +244,6 @@ if __name__ == "__main__":
     """
     try:
 
-        print("started extracting flo2d output")
         in_ts_start_time = None
         in_run_time = None
         flo2d_model = None
