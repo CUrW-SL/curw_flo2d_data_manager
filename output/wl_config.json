@@ -1,0 +1,15 @@
+{
+  "HYCHAN_OUT_FILE": "HYCHAN.OUT",
+  "TIMDEP_FILE": "TIMDEP.OUT",
+
+  "utc_offset": "",
+
+  "sim_tag": "daily_run",
+
+  "model": "FLO2D",
+
+  "unit": "m",
+  "unit_type": "Instantaneous",
+
+  "variable": "WaterLevel"
+}

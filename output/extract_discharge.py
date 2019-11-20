@@ -223,22 +223,20 @@ def usage():
 if __name__ == "__main__":
 
     """
-    Config.json 
+    dis_config.json 
     {
       "HYCHAN_OUT_FILE": "HYCHAN.OUT",
-      "TIMDEP_FILE": "TIMDEP.OUT",
-      
+    
       "utc_offset": "",
     
-      "sim_tag": "manual_run",
+      "sim_tag": "daily_run",
     
       "model": "FLO2D",
-      "version": "250",
     
-      "unit": "m",
+      "unit": "m3/s",
       "unit_type": "Instantaneous",
     
-      "variable": "WaterLevel"
+      "variable": "Discharge"
     }
 
     """
@@ -268,7 +266,7 @@ if __name__ == "__main__":
             elif opt in ("-d", "--dir"):
                 output_dir = arg.strip()
 
-        config = json.loads(open(os.path.join('output', 'config.json')).read())
+        config = json.loads(open(os.path.join('output', 'dis_config.json')).read())
 
         # flo2D related details
         HYCHAN_OUT_FILE = read_attribute_from_config_file('HYCHAN_OUT_FILE', config, True)
