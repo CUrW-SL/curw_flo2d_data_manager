@@ -164,7 +164,7 @@ if __name__ == "__main__":
             inflow_file_path = os.path.join(output_dir, file_name)
         else:
             inflow_file_path = os.path.join(r"D:\inflow",
-                                          '150_{}_{}_{}.DAT'.format(file_name, start_time, end_time).replace(' ', '_').replace(':', '-'))
+                                          '{}_flo2d_150_{}_{}.DAT'.format(file_name, start_time, end_time).replace(' ', '_').replace(':', '-'))
 
         if not os.path.isfile(inflow_file_path):
             print("{} start preparing inflow".format(datetime.now()))

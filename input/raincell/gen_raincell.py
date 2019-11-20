@@ -131,7 +131,7 @@ def usage():
     Prepare raincell for Flo2D 250 & 150
     -------------------------------------
     
-    Usage: .\gen_raincell.py [-m flo2d_XXX][-s "YYYY-MM-DD HH:MM:SS"] [-e "YYYY-MM-DD HH:MM:SS"]
+    Usage: .\input\\raincell\gen_raincell.py [-m flo2d_XXX][-s "YYYY-MM-DD HH:MM:SS"] [-e "YYYY-MM-DD HH:MM:SS"]
     
     -h  --help          Show usage
     -m  --model         FLO2D model (e.g. flo2d_250, flo2d_150). Default is flo2d_250.
