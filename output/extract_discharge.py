@@ -7,6 +7,7 @@ import os
 from datetime import datetime, timedelta
 import re
 import getopt
+import time
 
 from db_adapter.logger import logger
 from db_adapter.constants import COMMON_DATE_TIME_FORMAT, CURW_FCST_DATABASE, CURW_FCST_PASSWORD, CURW_FCST_USERNAME, \
@@ -36,6 +37,13 @@ def read_attribute_from_config_file(attribute, config, compulsory):
     else:
         logger.error("{} not specified in config file.".format(attribute))
         return None
+
+
+def get_file_last_modified_time(file_path):
+    # returns local time (UTC + 5 30)
+    modified_time = time.gmtime(os.path.getmtime(file_path) + 19800)
+
+    return time.strftime('%Y-%m-%d %H:%M:%S', modified_time)
 
 
 def check_time_format(time):
@@ -138,7 +146,7 @@ def extractForecastTimeseries(timeseries, extract_date, extract_time, by_day=Fal
     return new_timeseries
 
 
-def save_forecast_timeseries_to_db(pool, timeseries, run_date, run_time, opts, flo2d_stations):
+def save_forecast_timeseries_to_db(pool, timeseries, run_date, run_time, opts, flo2d_stations, fgt):
     print('EXTRACTFLO2DWATERLEVEL:: save_forecast_timeseries >>', opts)
 
     # {
@@ -184,8 +192,6 @@ def save_forecast_timeseries_to_db(pool, timeseries, run_date, run_time, opts, f
         TS = Timeseries(pool=pool)
 
         tms_id = TS.get_timeseries_id_if_exists(meta_data=tms_meta)
-
-        fgt = (datetime.now() + timedelta(hours=5, minutes=30)).strftime(COMMON_DATE_TIME_FORMAT)
 
         if tms_id is None:
             tms_id = TS.generate_timeseries_id(meta_data=tms_meta)
@@ -368,6 +374,9 @@ if __name__ == "__main__":
         if not os.path.exists(hychan_out_file_path):
             print('Unable to find file : ', hychan_out_file_path)
             traceback.print_exc()
+            exit(1)
+
+        fgt = get_file_last_modified_time(hychan_out_file_path)
 
         #####################################
         # Calculate the size of time series #
@@ -462,7 +471,7 @@ if __name__ == "__main__":
 
                         # Push timeseries to database
                         save_forecast_timeseries_to_db(pool=pool, timeseries=timeseries,
-                                run_date=run_date, run_time=run_time, opts=opts, flo2d_stations=flo2d_stations)
+                                run_date=run_date, run_time=run_time, opts=opts, flo2d_stations=flo2d_stations, fgt=fgt)
 
                         isWaterLevelLines = False
                         isSeriesComplete = False

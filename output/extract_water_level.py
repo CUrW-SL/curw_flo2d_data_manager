@@ -377,6 +377,7 @@ if __name__ == "__main__":
         if not os.path.exists(hychan_out_file_path):
             print('Unable to find file : ', hychan_out_file_path)
             traceback.print_exc()
+            exit(1)
 
         fgt = get_file_last_modified_time(hychan_out_file_path)
 
@@ -490,6 +491,7 @@ if __name__ == "__main__":
         if not os.path.exists(timdep_file_path):
             print('Unable to find file : ', timdep_file_path)
             traceback.print_exc()
+            exit(1)
 
         fgt = get_file_last_modified_time(timdep_file_path)
 
