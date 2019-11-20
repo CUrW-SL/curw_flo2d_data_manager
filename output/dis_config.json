@@ -1,0 +1,14 @@
+{
+  "HYCHAN_OUT_FILE": "HYCHAN.OUT",
+
+  "utc_offset": "",
+
+  "sim_tag": "daily_run",
+
+  "model": "FLO2D",
+
+  "unit": "m3/s",
+  "unit_type": "Instantaneous",
+
+  "variable": "Discharge"
+}
