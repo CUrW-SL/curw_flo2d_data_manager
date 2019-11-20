@@ -537,8 +537,6 @@ if __name__ == "__main__":
                         run_date=run_date, run_time=run_time, opts=opts, flo2d_stations=flo2d_stations)
 
     except Exception as e:
-        logger.error('JSON config data loading error.')
-        print('JSON config data loading error.')
         traceback.print_exc()
     finally:
         logger.info("Process finished.")

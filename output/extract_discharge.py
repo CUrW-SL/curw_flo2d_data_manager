@@ -471,8 +471,6 @@ if __name__ == "__main__":
             # -- END while loop
 
     except Exception as e:
-        logger.error('JSON config data loading error.')
-        print('JSON config data loading error.')
         traceback.print_exc()
     finally:
         logger.info("Process finished.")
