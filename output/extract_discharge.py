@@ -324,7 +324,6 @@ if __name__ == "__main__":
         variable = read_attribute_from_config_file('variable', config, True)
 
         hychan_out_file_path = os.path.join(output_dir, HYCHAN_OUT_FILE)
-        timdep_file_path = os.path.join(output_dir, TIMDEP_FILE)
 
         pool = get_Pool(host=CURW_FCST_HOST, port=CURW_FCST_PORT, db=CURW_FCST_DATABASE, user=CURW_FCST_USERNAME, password=CURW_FCST_PASSWORD)
 
