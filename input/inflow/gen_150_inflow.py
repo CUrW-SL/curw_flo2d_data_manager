@@ -11,9 +11,7 @@ DATE_TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 from db_adapter.base import get_Pool, destroy_Pool
 from db_adapter.constants import CURW_SIM_DATABASE, CURW_SIM_HOST, CURW_SIM_PASSWORD, CURW_SIM_PORT, CURW_SIM_USERNAME
-from db_adapter.constants import CURW_OBS_DATABASE, CURW_OBS_PORT, CURW_OBS_PASSWORD, CURW_OBS_USERNAME, CURW_OBS_HOST
 from db_adapter.curw_sim.timeseries.discharge import Timeseries as DisTS
-from db_adapter.constants import COMMON_DATE_TIME_FORMAT
 
 
 def write_to_file(file_name, data):
