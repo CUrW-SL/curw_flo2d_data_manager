@@ -10,7 +10,9 @@ import getopt
 DATE_TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 from db_adapter.base import get_Pool, destroy_Pool
-from db_adapter.constants import CURW_SIM_DATABASE, CURW_SIM_HOST, CURW_SIM_PASSWORD, CURW_SIM_PORT, CURW_SIM_USERNAME
+from db_adapter.constants import set_db_config_file_path
+from db_adapter.constants import connection as con_params
+# from db_adapter.constants import CURW_SIM_DATABASE, CURW_SIM_HOST, CURW_SIM_PASSWORD, CURW_SIM_PORT, CURW_SIM_USERNAME
 from db_adapter.curw_sim.timeseries.discharge import Timeseries as DisTS
 
 
@@ -63,8 +65,9 @@ def prepare_inflow_150(inflow_file_path, start, end, discharge_id):
 
     try:
 
-        curw_sim_pool = get_Pool(host=CURW_SIM_HOST, user=CURW_SIM_USERNAME, password=CURW_SIM_PASSWORD, port=CURW_SIM_PORT,
-                                 db=CURW_SIM_DATABASE)
+        curw_sim_pool = get_Pool(host=con_params.CURW_SIM_HOST, user=con_params.CURW_SIM_USERNAME,
+                                 password=con_params.URW_SIM_PASSWORD, port=con_params.CURW_SIM_PORT,
+                                 db=con_params.CURW_SIM_DATABASE)
 
         # Extract discharge series
         TS = DisTS(pool=curw_sim_pool)
@@ -119,6 +122,8 @@ def usage():
 
 
 if __name__ == "__main__":
+
+    set_db_config_file_path(os.path.join('D:\curw_flo2d_data_manager', 'db_adapter_config.json'))
 
     try:
 

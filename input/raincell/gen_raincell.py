@@ -7,7 +7,9 @@ import os
 import sys
 
 DATE_TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
-from db_adapter.constants import CURW_SIM_DATABASE, CURW_SIM_PASSWORD, CURW_SIM_USERNAME, CURW_SIM_PORT, CURW_SIM_HOST
+from db_adapter.constants import set_db_config_file_path
+from db_adapter.constants import connection as con_params
+# from db_adapter.constants import CURW_SIM_DATABASE, CURW_SIM_PASSWORD, CURW_SIM_USERNAME, CURW_SIM_PORT, CURW_SIM_HOST
 
 
 def write_to_file(file_name, data):
@@ -53,7 +55,8 @@ def prepare_raincell(raincell_file_path, start_time, end_time,
     :param interpolation_method: value interpolation method (e.g. "MME")
     :return:
     """
-    connection = pymysql.connect(host=CURW_SIM_HOST, user=CURW_SIM_USERNAME, password=CURW_SIM_PASSWORD, db=CURW_SIM_DATABASE,
+    connection = pymysql.connect(host=con_params.CURW_SIM_HOST, user=con_params.CURW_SIM_USERNAME,
+                                 password=con_params.CURW_SIM_PASSWORD, db=con_params.CURW_SIM_DATABASE,
             cursorclass=pymysql.cursors.DictCursor)
     print("Connected to database")
 
@@ -142,6 +145,8 @@ def usage():
 
 
 if __name__=="__main__":
+
+    set_db_config_file_path(os.path.join('D:\curw_flo2d_data_manager', 'db_adapter_config.json'))
 
     try:
         start_time = None

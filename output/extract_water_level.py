@@ -10,8 +10,9 @@ import getopt
 import time
 
 from db_adapter.logger import logger
-from db_adapter.constants import COMMON_DATE_TIME_FORMAT, CURW_FCST_DATABASE, CURW_FCST_PASSWORD, CURW_FCST_USERNAME, \
-    CURW_FCST_PORT, CURW_FCST_HOST
+from db_adapter.constants import set_db_config_file_path
+from db_adapter.constants import connection as con_params
+from db_adapter.constants import COMMON_DATE_TIME_FORMAT
 from db_adapter.base import get_Pool
 from db_adapter.curw_fcst.source import get_source_id, get_source_parameters
 from db_adapter.curw_fcst.variable import get_variable_id
@@ -247,6 +248,8 @@ if __name__ == "__main__":
     }
 
     """
+    set_db_config_file_path(os.path.join('D:\curw_flo2d_data_manager', 'db_adapter_config.json'))
+
     try:
 
         in_ts_start_time = None
@@ -334,7 +337,8 @@ if __name__ == "__main__":
         hychan_out_file_path = os.path.join(output_dir, HYCHAN_OUT_FILE)
         timdep_file_path = os.path.join(output_dir, TIMDEP_FILE)
 
-        pool = get_Pool(host=CURW_FCST_HOST, port=CURW_FCST_PORT, db=CURW_FCST_DATABASE, user=CURW_FCST_USERNAME, password=CURW_FCST_PASSWORD)
+        pool = get_Pool(host=con_params.CURW_FCST_HOST, port=con_params.CURW_FCST_PORT, db=con_params.CURW_FCST_DATABASE,
+                        user=con_params.CURW_FCST_USERNAME, password=con_params.CURW_FCST_PASSWORD)
 
         flo2d_model_name = '{}_{}'.format(model, version)
 
