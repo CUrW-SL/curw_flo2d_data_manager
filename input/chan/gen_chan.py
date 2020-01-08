@@ -83,7 +83,7 @@ def check_time_format(time):
         exit(1)
 
 
-def prepare_chan(chan_file_path, start, end, flo2d_model):
+def prepare_chan(chan_file_path, start, flo2d_model):
 
     flo2d_version = flo2d_model.split('_')[1]
 
@@ -164,14 +164,13 @@ def create_dir_if_not_exists(path):
 def usage():
     usageText = """
     ------------------------------------------
-    Prepare chan for Flo2D 250 & Flo2D 150
+    Prepare CHAN for Flo2D 250 & Flo2D 150
     ------------------------------------------
-    Usage: .\input\chan\gen_chan.py [-m flo2d_XXX] [-s "YYYY-MM-DD HH:MM:SS"] [-e "YYYY-MM-DD HH:MM:SS"]
+    Usage: .\input\chan\gen_chan.py [-m flo2d_XXX] [-s "YYYY-MM-DD HH:MM:SS"]
 
     -h  --help          Show usage
     -m  --model         FLO2D model (e.g. flo2d_250, flo2d_150). Default is flo2d_250.
-    -s  --start_time    Outflow start time (e.g: "2019-06-05 00:00:00"). Default is 00:00:00, 2 days before today.
-    -e  --end_time      Outflow end time (e.g: "2019-06-05 23:00:00"). Default is 00:00:00, tomorrow.
+    -s  --start_time    Chan start time (e.g: "2019-06-05 00:00:00"). Default is 00:00:00, 2 days before today.
     """
     print(usageText)
 
@@ -183,12 +182,11 @@ if __name__ == "__main__":
     try:
 
         start_time = None
-        end_time = None
         flo2d_model = None
 
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:e:",
-                                       ["help", "flo2d_model=", "start_time=", "end_time="])
+            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:",
+                                       ["help", "flo2d_model=", "start_time="])
         except getopt.GetoptError:
             usage()
             sys.exit(2)
@@ -200,8 +198,6 @@ if __name__ == "__main__":
                 flo2d_model = arg.strip()
             elif opt in ("-s", "--start_time"):
                 start_time = arg.strip()
-            elif opt in ("-e", "--end_time"):
-                end_time = arg.strip()
 
         # Load config details and db connection params
         config = json.loads(open(os.path.join(ROOT_DIRECTORY, "input", "chan", "config.json")).read())
@@ -220,20 +216,15 @@ if __name__ == "__main__":
         else:
             check_time_format(time=start_time)
 
-        if end_time is None:
-            end_time = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d 00:00:00')
-        else:
-            check_time_format(time=end_time)
-
         if output_dir is not None and file_name is not None:
             chan_file_path = os.path.join(output_dir, file_name)
         else:
             chan_file_path = os.path.join(r"D:\chan",
-                                          '{}_{}_{}_{}.DAT'.format(file_name, flo2d_model, start_time, end_time).replace(' ', '_').replace(':', '-'))
+                                          '{}_{}_{}.DAT'.format(file_name, flo2d_model, start_time).replace(' ', '_').replace(':', '-'))
 
         if not os.path.isfile(chan_file_path):
             print("{} start preparing chan".format(datetime.now()))
-            prepare_chan(chan_file_path, start=start_time, end=end_time, flo2d_model=flo2d_model)
+            prepare_chan(chan_file_path, start=start_time, flo2d_model=flo2d_model)
             print("{} completed preparing chan".format(datetime.now()))
         else:
             print('Chan file already in path : ', chan_file_path)
