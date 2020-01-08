@@ -93,6 +93,7 @@ def prepare_chan(chan_file_path, start, end, flo2d_model):
 
         # retrieve initial conditions from database
         initial_conditions = get_flo2d_initial_conditions(pool=curw_sim_pool, flo2d_model=flo2d_model)
+        print(initial_conditions)
 
         # chan head
         head_file = open(os.path.join(ROOT_DIRECTORY, "input", "chan", "chan_{}_head.dat".format(flo2d_version)), "r")
@@ -112,6 +113,7 @@ def prepare_chan(chan_file_path, start, end, flo2d_model):
             up_strm = chan_body[i]
             dwn_strm = chan_body[i+1]
             grid_id = "{}_{}_{}".format(flo2d_model, up_strm, dwn_strm)
+            print(grid_id)
             wl_id = initial_conditions.get(grid_id)[2]
             offset = (datetime.strptime(start, DATE_TIME_FORMAT) + timedelta(hours=2)).strftime(DATE_TIME_FORMAT)
             water_level = getWL(connection=obs_connection, wl_id=wl_id, start_date=start, end_date=offset)
