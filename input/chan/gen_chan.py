@@ -38,7 +38,10 @@ def getWL(connection, wl_id, start_date, end_date):
     with connection.cursor() as cursor1:
         cursor1.callproc('getWL', (wl_id, start_date, end_date))
         result = cursor1.fetchone()
-        return result.get('value')
+        if result is not None:
+            return result.get('value')
+        else:
+            return None
 
 
 def read_attribute_from_config_file(attribute, config, compulsory=False):
@@ -109,15 +112,21 @@ def prepare_chan(chan_file_path, start, end, flo2d_model):
 
         i = 0
         while i < len(chan_body):
-            up_strm = chan_body[i]
-            dwn_strm = chan_body[i+1]
+            up_strm = chan_body[i].split()[0]
+            up_strm_default = chan_body[i].split()[1]
+            dwn_strm = chan_body[i+1].split()[0]
+            dwn_strm_default = chan_body[i+1].split()[1]
             grid_id = "{}_{}_{}".format(flo2d_model, up_strm, dwn_strm)
             print(grid_id)
             wl_id = initial_conditions.get(grid_id)[2]
             offset = (datetime.strptime(start, DATE_TIME_FORMAT) + timedelta(hours=2)).strftime(DATE_TIME_FORMAT)
             water_level = getWL(connection=obs_connection, wl_id=wl_id, start_date=start, end_date=offset)
-            chan_processed_body.append("{}{}".format(up_strm.ljust(6), (str(water_level)).rjust(6)))
-            chan_processed_body.append("{}{}".format(dwn_strm.ljust(6), (str(water_level)).rjust(6)))
+            if water_level is None:
+                chan_processed_body.append("{}{}".format(up_strm.ljust(6), (str(up_strm_default)).rjust(6)))
+                chan_processed_body.append("{}{}".format(dwn_strm.ljust(6), (str(dwn_strm_default)).rjust(6)))
+            else:
+                chan_processed_body.append("{}{}".format(up_strm.ljust(6), (str(water_level)).rjust(6)))
+                chan_processed_body.append("{}{}".format(dwn_strm.ljust(6), (str(water_level)).rjust(6)))
             i += 2
 
         append_to_file(chan_file_path, data=chan_processed_body)
