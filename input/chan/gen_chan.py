@@ -17,6 +17,10 @@ from db_adapter.constants import connection as con_params
 from db_adapter.curw_sim.grids import get_flo2d_initial_conditions
 
 
+def write_file_to_file(file_name, file_content):
+    with open(file_name, 'w+') as f:
+        f.write(file_content)
+
 def write_to_file(file_name, data):
     with open(file_name, 'w+') as f:
         f.write('\n'.join(data))
@@ -102,7 +106,7 @@ def prepare_chan(chan_file_path, start, end, flo2d_model):
         head_file = open(os.path.join(ROOT_DIRECTORY, "input", "chan", "chan_{}_head.dat".format(flo2d_version)), "r")
         head = head_file.read()
         head_file.close()
-        write_to_file(chan_file_path, data=head)
+        write_file_to_file(chan_file_path, file_content=head)
 
         # chan body
         chan_processed_body = []
