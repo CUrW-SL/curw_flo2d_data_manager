@@ -105,9 +105,8 @@ def prepare_chan(chan_file_path, start, end, flo2d_model):
         chan_processed_body = []
 
         body_file_name = os.path.join(ROOT_DIRECTORY, "input", "chan", "chan_{}_body.dat".format(flo2d_version))
-        chan_body = []
-        with open(body_file_name, "r") as f:
-            chan_body = f.readlines()
+        chan_body = [line.rstrip('\n') for line in open(body_file_name, "r")]
+
         i = 0
         while i < len(chan_body):
             up_strm = chan_body[i]
