@@ -20,6 +20,7 @@ from db_adapter.curw_fcst.unit import get_unit_id, UnitType
 from db_adapter.curw_fcst.station import get_flo2d_output_stations, StationEnum
 from db_adapter.curw_fcst.timeseries import Timeseries
 
+ROOT_DIRECTORY = 'D:\curw_flo2d_data_manager'
 flo2d_stations = { }
 
 
@@ -248,7 +249,7 @@ if __name__ == "__main__":
     }
 
     """
-    set_db_config_file_path(os.path.join('D:\curw_flo2d_data_manager', 'db_adapter_config.json'))
+    set_db_config_file_path(os.path.join(ROOT_DIRECTORY, 'db_adapter_config.json'))
 
     try:
 
@@ -276,7 +277,7 @@ if __name__ == "__main__":
             elif opt in ("-d", "--dir"):
                 output_dir = arg.strip()
 
-        config = json.loads(open(os.path.join('output', 'wl_config.json')).read())
+        config = json.loads(open(os.path.join(ROOT_DIRECTORY, 'output', 'wl_config.json')).read())
 
         # flo2D related details
         HYCHAN_OUT_FILE = read_attribute_from_config_file('HYCHAN_OUT_FILE', config, True)

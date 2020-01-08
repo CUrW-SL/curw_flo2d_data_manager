@@ -8,6 +8,7 @@ import sys
 import getopt
 
 DATE_TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+ROOT_DIRECTORY = 'D:\curw_flo2d_data_manager'
 
 from db_adapter.base import get_Pool, destroy_Pool
 from db_adapter.constants import set_db_config_file_path
@@ -123,7 +124,7 @@ def usage():
 
 if __name__ == "__main__":
 
-    set_db_config_file_path(os.path.join('D:\curw_flo2d_data_manager', 'db_adapter_config.json'))
+    set_db_config_file_path(os.path.join(ROOT_DIRECTORY, 'db_adapter_config.json'))
 
     try:
 
@@ -146,7 +147,7 @@ if __name__ == "__main__":
                 end_time = arg.strip()
 
         # Load config details and db connection params
-        config = json.loads(open(os.path.join("input", "inflow", "config_150.json")).read())
+        config = json.loads(open(os.path.join(ROOT_DIRECTORY, "input", "inflow", "config_150.json")).read())
 
         output_dir = read_attribute_from_config_file('output_dir', config)
         file_name = read_attribute_from_config_file('output_file_name', config)

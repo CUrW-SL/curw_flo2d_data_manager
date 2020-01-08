@@ -8,6 +8,7 @@ import sys
 import getopt
 
 DATE_TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+ROOT_DIRECTORY = 'D:\curw_flo2d_data_manager'
 
 from db_adapter.base import get_Pool, destroy_Pool
 from db_adapter.constants import set_db_config_file_path
@@ -107,7 +108,7 @@ def prepare_outflow_250(outflow_file_path, start, end, tide_id):
 
         write_to_file(outflow_file_path, data=outflow)
 
-        tail_file = open(os.path.join("input", "outflow", "tail_250.txt"), "r")
+        tail_file = open(os.path.join(ROOT_DIRECTORY, "input", "outflow", "tail_250.txt"), "r")
         tail = tail_file.read()
         tail_file.close()
 
@@ -160,7 +161,7 @@ def prepare_outflow_150(outflow_file_path, start, end, tide_id):
 
         write_to_file(outflow_file_path, data=outflow)
 
-        tail_file = open(os.path.join("input", "outflow", "tail_150.txt"), "r")
+        tail_file = open(os.path.join(ROOT_DIRECTORY, "input", "outflow", "tail_150.txt"), "r")
         tail = tail_file.read()
         tail_file.close()
 
@@ -202,7 +203,7 @@ def usage():
 
 if __name__ == "__main__":
 
-    set_db_config_file_path(os.path.join('D:\curw_flo2d_data_manager', 'db_adapter_config.json'))
+    set_db_config_file_path(os.path.join(ROOT_DIRECTORY, 'db_adapter_config.json'))
 
     try:
 
@@ -228,7 +229,7 @@ if __name__ == "__main__":
                 end_time = arg.strip()
 
         # Load config details and db connection params
-        config = json.loads(open(os.path.join("input", "outflow", "config.json")).read())
+        config = json.loads(open(os.path.join(ROOT_DIRECTORY, "input", "outflow", "config.json")).read())
 
         output_dir = read_attribute_from_config_file('output_dir', config)
         file_name = read_attribute_from_config_file('output_file_name', config)
