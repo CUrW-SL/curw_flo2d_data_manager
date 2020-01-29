@@ -67,7 +67,7 @@ def prepare_inflow_150(inflow_file_path, start, end, discharge_id):
     try:
 
         curw_sim_pool = get_Pool(host=con_params.CURW_SIM_HOST, user=con_params.CURW_SIM_USERNAME,
-                                 password=con_params.URW_SIM_PASSWORD, port=con_params.CURW_SIM_PORT,
+                                 password=con_params.CURW_SIM_PASSWORD, port=con_params.CURW_SIM_PORT,
                                  db=con_params.CURW_SIM_DATABASE)
 
         # Extract discharge series
