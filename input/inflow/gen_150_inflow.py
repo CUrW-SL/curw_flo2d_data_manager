@@ -14,6 +14,7 @@ from db_adapter.base import get_Pool, destroy_Pool
 from db_adapter.constants import set_db_config_file_path
 from db_adapter.constants import connection as con_params
 # from db_adapter.constants import CURW_SIM_DATABASE, CURW_SIM_HOST, CURW_SIM_PASSWORD, CURW_SIM_PORT, CURW_SIM_USERNAME
+from db_adapter.curw_sim.timeseries import get_curw_sim_discharge_id
 from db_adapter.curw_sim.timeseries.discharge import Timeseries as DisTS
 
 
@@ -25,6 +26,14 @@ def write_to_file(file_name, data):
 def append_to_file(file_name, data):
     with open(file_name, 'a+') as f:
         f.write('\n'.join(data))
+
+
+def makedir_if_not_exist_given_filepath(filename):
+    if not os.path.exists(os.path.dirname(filename)):
+        try:
+            os.makedirs(os.path.dirname(filename))
+        except OSError as exc:  # Guard against race condition
+            pass
 
 
 def read_attribute_from_config_file(attribute, config, compulsory=False):
@@ -62,13 +71,9 @@ def check_time_format(time):
         exit(1)
 
 
-def prepare_inflow_150(inflow_file_path, start, end, discharge_id):
+def prepare_inflow_150(inflow_file_path, start, end, discharge_id, curw_sim_pool):
 
     try:
-
-        curw_sim_pool = get_Pool(host=con_params.CURW_SIM_HOST, user=con_params.CURW_SIM_USERNAME,
-                                 password=con_params.CURW_SIM_PASSWORD, port=con_params.CURW_SIM_PORT,
-                                 db=con_params.CURW_SIM_DATABASE)
 
         # Extract discharge series
         TS = DisTS(pool=curw_sim_pool)
@@ -113,11 +118,13 @@ def usage():
     Prepare inflow for Flo2D 150
     ----------------------------
     
-    Usage: .\input\inflow\gen_150_inflow.py [-s "YYYY-MM-DD HH:MM:SS"] [-e "YYYY-MM-DD HH:MM:SS"]
+    Usage: .\input\inflow\gen_150_inflow.py [-s "YYYY-MM-DD HH:MM:SS"] [-e "YYYY-MM-DD HH:MM:SS"] [-d "directory_path"] [-M XXX]
 
     -h  --help          Show usage
     -s  --start_time    Inflow start time (e.g: "2019-06-05 00:00:00"). Default is 00:00:00, 2 days before today.
     -e  --end_time      Inflow end time (e.g: "2019-06-05 23:00:00"). Default is 00:00:00, tomorrow.
+    -d  --dir           Inflow file generation location (e.g: "C:\\udp_150\\2019-09-23")
+    -M  --method        Inflow calculation method (e.g: "MME", "SF")
     """
     print(usageText)
 
@@ -128,12 +135,18 @@ if __name__ == "__main__":
 
     try:
 
+        GRID_ID = "discharge_glencourse"
+
         start_time = None
         end_time = None
+        method = None
+        output_dir = None
+        file_name = 'INFLOW.DAT'
+        flo2d_model = 'flo2d_150'
 
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "h:s:e:",
-                                       ["help", "start_time=", "end_time="])
+            opts, args = getopt.getopt(sys.argv[1:], "h:s:e:d:M:",
+                                       ["help", "start_time=", "end_time=", "dir=", "method="])
         except getopt.GetoptError:
             usage()
             sys.exit(2)
@@ -145,14 +158,25 @@ if __name__ == "__main__":
                 start_time = arg.strip()
             elif opt in ("-e", "--end_time"):
                 end_time = arg.strip()
+            elif opt in ("-d", "--dir"):
+                output_dir = arg.strip()
+            elif opt in ("-M", "--method"):
+                method = arg.strip()
 
         # Load config details and db connection params
         config = json.loads(open(os.path.join(ROOT_DIRECTORY, "input", "inflow", "config_150.json")).read())
 
-        output_dir = read_attribute_from_config_file('output_dir', config)
-        file_name = read_attribute_from_config_file('output_file_name', config)
+        curw_sim_pool = get_Pool(host=con_params.CURW_SIM_HOST, user=con_params.CURW_SIM_USERNAME,
+                                 password=con_params.CURW_SIM_PASSWORD, port=con_params.CURW_SIM_PORT,
+                                 db=con_params.CURW_SIM_DATABASE)
 
-        discharge_id = read_attribute_from_config_file('discharge_id', config, True)
+        if method is None:
+            discharge_id = read_attribute_from_config_file('discharge_id', config, True)
+        else:
+            discharge_id = get_curw_sim_discharge_id(pool=curw_sim_pool, method=method, model=flo2d_model,
+                                                     grid_id=GRID_ID)
+
+        print(discharge_id)
 
         if start_time is None:
             start_time = (datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d 00:00:00')
@@ -164,15 +188,18 @@ if __name__ == "__main__":
         else:
             check_time_format(time=end_time)
 
-        if output_dir is not None and file_name is not None:
+        if output_dir is not None:
             inflow_file_path = os.path.join(output_dir, file_name)
         else:
             inflow_file_path = os.path.join(r"D:\inflow",
-                                          '{}_flo2d_150_{}_{}.DAT'.format(file_name, start_time, end_time).replace(' ', '_').replace(':', '-'))
+                                          'INFLOW_flo2d_150_{}_{}.DAT'.format(start_time, end_time).replace(' ', '_').replace(':', '-'))
+
+        makedir_if_not_exist_given_filepath(inflow_file_path)
 
         if not os.path.isfile(inflow_file_path):
             print("{} start preparing inflow".format(datetime.now()))
-            prepare_inflow_150(inflow_file_path, start=start_time, end=end_time, discharge_id=discharge_id)
+            prepare_inflow_150(inflow_file_path, start=start_time, end=end_time, discharge_id=discharge_id,
+                               curw_sim_pool=curw_sim_pool)
             print("{} completed preparing inflow".format(datetime.now()))
         else:
             print('Inflow file already in path : ', inflow_file_path)

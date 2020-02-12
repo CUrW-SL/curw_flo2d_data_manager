@@ -172,7 +172,7 @@ def usage():
     ------------------------------------------
     Prepare CHAN for Flo2D 250 & Flo2D 150
     ------------------------------------------
-    Usage: .\input\chan\gen_chan.py [-m flo2d_XXX] [-s "YYYY-MM-DD HH:MM:SS"] -d [directory_path]
+    Usage: .\input\chan\gen_chan.py [-m flo2d_XXX] [-s "YYYY-MM-DD HH:MM:SS"] [-d "directory_path"]
 
     -h  --help          Show usage
     -m  --model         FLO2D model (e.g. flo2d_250, flo2d_150). Default is flo2d_250.
