@@ -169,6 +169,7 @@ def usage():
     -h  --help          Show usage
     -m  --model         FLO2D model (e.g. flo2d_250, flo2d_150). Default is flo2d_250.
     -s  --start_time    Chan start time (e.g: "2019-06-05 00:00:00"). Default is 00:00:00, 2 days before today.
+    -d  --dir           Chan file generation location (e.g: "C:\\udp_150\\2019-09-23")
     """
     print(usageText)
 
@@ -181,6 +182,8 @@ if __name__ == "__main__":
 
         start_time = None
         flo2d_model = None
+        output_dir = None
+        file_name = 'CHAN.DAT'
 
         try:
             opts, args = getopt.getopt(sys.argv[1:], "h:m:s:",
@@ -196,12 +199,9 @@ if __name__ == "__main__":
                 flo2d_model = arg.strip()
             elif opt in ("-s", "--start_time"):
                 start_time = arg.strip()
+            elif opt in ("-d", "--dir"):
+                output_dir = arg.strip()
 
-        # Load config details and db connection params
-        config = json.loads(open(os.path.join(ROOT_DIRECTORY, "input", "chan", "config.json")).read())
-
-        output_dir = read_attribute_from_config_file('output_dir', config)
-        file_name = read_attribute_from_config_file('output_file_name', config)
 
         if flo2d_model is None:
             flo2d_model = "flo2d_250"
@@ -214,11 +214,11 @@ if __name__ == "__main__":
         else:
             check_time_format(time=start_time)
 
-        if output_dir is not None and file_name is not None:
+        if output_dir is not None:
             chan_file_path = os.path.join(output_dir, file_name)
         else:
             chan_file_path = os.path.join(r"D:\chan",
-                                          '{}_{}_{}.DAT'.format(file_name, flo2d_model, start_time).replace(' ', '_').replace(':', '-'))
+                                          'CHAN_{}_{}.DAT'.format(flo2d_model, start_time).replace(' ', '_').replace(':', '-'))
 
         if not os.path.isfile(chan_file_path):
             print("{} start preparing chan".format(datetime.now()))
