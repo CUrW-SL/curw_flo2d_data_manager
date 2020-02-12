@@ -186,8 +186,8 @@ if __name__ == "__main__":
         file_name = 'CHAN.DAT'
 
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:",
-                                       ["help", "flo2d_model=", "start_time="])
+            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:d:",
+                                       ["help", "flo2d_model=", "start_time=", "dir="])
         except getopt.GetoptError:
             usage()
             sys.exit(2)
