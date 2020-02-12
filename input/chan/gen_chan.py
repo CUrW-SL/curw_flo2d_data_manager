@@ -38,6 +38,14 @@ def append_file_to_file(file_name, file_content):
         f.write(file_content)
 
 
+def makedir_if_not_exist_given_filepath(filename):
+    if not os.path.exists(os.path.dirname(filename)):
+        try:
+            os.makedirs(os.path.dirname(filename))
+        except OSError as exc:  # Guard against race condition
+            pass
+
+
 def getWL(connection, wl_id, start_date, end_date):
     with connection.cursor() as cursor1:
         cursor1.callproc('getWL', (wl_id, start_date, end_date))
@@ -164,7 +172,7 @@ def usage():
     ------------------------------------------
     Prepare CHAN for Flo2D 250 & Flo2D 150
     ------------------------------------------
-    Usage: .\input\chan\gen_chan.py [-m flo2d_XXX] [-s "YYYY-MM-DD HH:MM:SS"]
+    Usage: .\input\chan\gen_chan.py [-m flo2d_XXX] [-s "YYYY-MM-DD HH:MM:SS"] -d [directory_path]
 
     -h  --help          Show usage
     -m  --model         FLO2D model (e.g. flo2d_250, flo2d_150). Default is flo2d_250.
@@ -219,6 +227,8 @@ if __name__ == "__main__":
         else:
             chan_file_path = os.path.join(r"D:\chan",
                                           'CHAN_{}_{}.DAT'.format(flo2d_model, start_time).replace(' ', '_').replace(':', '-'))
+
+        makedir_if_not_exist_given_filepath(chan_file_path)
 
         if not os.path.isfile(chan_file_path):
             print("{} start preparing chan".format(datetime.now()))
