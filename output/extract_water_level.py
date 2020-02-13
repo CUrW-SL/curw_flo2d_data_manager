@@ -215,7 +215,7 @@ def usage():
     Extract Flo2D 250 & 150 output waterlevel to the curw_fcst database.
     --------------------------------------------------------------------
     
-    Usage: .\output\extract_water_level.py [-m flo2d_XXX] [-s "YYYY-MM-DD HH:MM:SS"] [-r "YYYY-MM-DD HH:MM:SS"] 
+    Usage: .\output\extract_water_level.py [-m flo2d_XXX] [-s "YYYY-MM-DD HH:MM:SS"] [-r "YYYY-MM-DD HH:MM:SS"] [-t XXX]
     [-d "C:\\udp_150\\2019-09-23"]
 
     -h  --help          Show usage
@@ -224,6 +224,7 @@ def usage():
     -r  --run_time      Run time (e.g: "2019-06-05 23:00:00").
     -d  --dir           Output directory (e.g. "C:\\udp_150\\2019-09-23"); 
                         Directory where HYCHAN.OUT and TIMDEP.OUT files located.
+    -t  --sim_tag       Simulation tag
     """
     print(usageText)
 
@@ -257,10 +258,11 @@ if __name__ == "__main__":
         in_run_time = None
         flo2d_model = None
         output_dir = None
+        sim_tag = None
 
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:r:d:",
-                                       ["help", "model=", "ts_start_time=", "run_time=", "dir="])
+            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:r:d:t:",
+                                       ["help", "model=", "ts_start_time=", "run_time=", "dir=", "sim_tag="])
         except getopt.GetoptError:
             usage()
             sys.exit(2)
@@ -276,6 +278,8 @@ if __name__ == "__main__":
                 in_run_time = arg.strip()
             elif opt in ("-d", "--dir"):
                 output_dir = arg.strip()
+            elif opt in ("-t", "--sim_tag"):
+                sim_tag = arg.strip()
 
         config = json.loads(open(os.path.join(ROOT_DIRECTORY, 'output', 'wl_config.json')).read())
 
@@ -312,8 +316,13 @@ if __name__ == "__main__":
 
         output_dir = output_dir
 
-        run_date = in_run_time.strftime("%Y-%m-%d")
-        run_time = in_run_time.strftime("%H:%M:%S")
+        # run_date = in_run_time.strftime("%Y-%m-%d")
+        # run_time = in_run_time.strftime("%H:%M:%S")
+        data_extraction_start = (datetime.strptime(in_ts_start_time, COMMON_DATE_TIME_FORMAT) + timedelta(minutes=15)) \
+            .strftime(COMMON_DATE_TIME_FORMAT)
+        run_date = data_extraction_start.split(' ')[0]
+        run_time = data_extraction_start.split(' ')[1]
+
         ts_start_date = in_ts_start_time.strftime("%Y-%m-%d")
         ts_start_time = in_ts_start_time.strftime("%H:%M:%S")
 
@@ -322,7 +331,8 @@ if __name__ == "__main__":
             utc_offset = ''
 
         # sim tag
-        sim_tag = read_attribute_from_config_file('sim_tag', config, True)
+        if sim_tag is None:
+            sim_tag = read_attribute_from_config_file('sim_tag', config, True)
 
         # source details
         model = read_attribute_from_config_file('model', config, True)
