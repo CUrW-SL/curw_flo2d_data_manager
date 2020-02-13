@@ -5,11 +5,30 @@ from datetime import datetime, timedelta
 import traceback
 import os
 import sys
+import json
 
 DATE_TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 from db_adapter.constants import set_db_config_file_path
 from db_adapter.constants import connection as con_params
 # from db_adapter.constants import CURW_SIM_DATABASE, CURW_SIM_PASSWORD, CURW_SIM_USERNAME, CURW_SIM_PORT, CURW_SIM_HOST
+
+
+def save_metadata_to_file(input_filepath, metadata):
+
+    metadata_filepath = os.path.join(os.path.dirname(input_filepath), "run_meta.json")
+
+    updated_metadata = {}
+    try:
+        existing_metadata = json.loads(open(metadata_filepath).read())
+        updated_metadata = existing_metadata
+    except FileNotFoundError as eFNFE:
+        pass
+
+    for key in metadata.keys():
+        updated_metadata[key] = metadata[key]
+
+    with open(metadata_filepath, 'w') as outfile:
+        json.dump(updated_metadata, outfile)
 
 
 def write_to_file(file_name, data):
@@ -218,6 +237,13 @@ if __name__=="__main__":
             prepare_raincell(raincell_file_path,
                     target_model=flo2d_model, start_time=start_time, end_time=end_time, interpolation_method=method)
             # print(raincell_file_path, flo2d_model, start_time, end_time)
+            metadata = {
+                "inflow": {
+                    "tag": method,
+                    "model": flo2d_model
+                }
+            }
+            save_metadata_to_file(input_filepath=raincell_file_path, metadata=metadata)
             print("{} completed preparing raincell".format(datetime.now()))
         else:
             print('Raincell file already in path : ', raincell_file_path)
