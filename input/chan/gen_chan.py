@@ -17,9 +17,28 @@ from db_adapter.constants import connection as con_params
 from db_adapter.curw_sim.grids import get_flo2d_initial_conditions
 
 
+def save_metadata_to_file(input_filepath, metadata):
+
+    metadata_filepath = os.path.join(os.path.dirname(input_filepath), "run_meta.json")
+
+    updated_metadata = {}
+    try:
+        existing_metadata = json.loads(open(metadata_filepath).read())
+        updated_metadata = existing_metadata
+    except FileNotFoundError as eFNFE:
+        pass
+
+    for key in metadata.keys():
+        updated_metadata[key] = metadata[key]
+
+    with open(metadata_filepath, 'w') as outfile:
+        json.dump(updated_metadata, outfile)
+
+
 def write_file_to_file(file_name, file_content):
     with open(file_name, 'w+') as f:
         f.write(file_content)
+
 
 def write_to_file(file_name, data):
     with open(file_name, 'w+') as f:
@@ -233,6 +252,13 @@ if __name__ == "__main__":
         if not os.path.isfile(chan_file_path):
             print("{} start preparing chan".format(datetime.now()))
             prepare_chan(chan_file_path, start=start_time, flo2d_model=flo2d_model)
+            metadata = {
+                "chan": {
+                    "tag": "from curw_sim database",
+                    "model": flo2d_model
+                }
+            }
+            save_metadata_to_file(input_filepath=chan_file_path, metadata=metadata)
             print("{} completed preparing chan".format(datetime.now()))
         else:
             print('Chan file already in path : ', chan_file_path)
