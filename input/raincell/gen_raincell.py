@@ -142,14 +142,14 @@ def usage():
     Prepare raincell for Flo2D 250 & 150
     -------------------------------------
     
-    Usage: .\input\\raincell\gen_raincell.py [-m flo2d_XXX][-s "YYYY-MM-DD HH:MM:SS"] [-e "YYYY-MM-DD HH:MM:SS"]
+    Usage: .\input\\raincell\gen_raincell.py [-m flo2d_XXX][-s "YYYY-MM-DD HH:MM:SS"] [-e "YYYY-MM-DD HH:MM:SS"] [-d "directory_path"] [-M XXX]
     
     -h  --help          Show usage
     -m  --model         FLO2D model (e.g. flo2d_250, flo2d_150). Default is flo2d_250.
     -s  --start_time    Raincell start time (e.g: "2019-06-05 00:00:00"). Default is 23:30:00, 3 days before today.
     -e  --end_time      Raincell end time (e.g: "2019-06-05 23:30:00"). Default is 23:30:00, tomorrow.
-    -d  --dir           Inflow file generation location (e.g: "C:\\udp_150\\2019-09-23")
-    -M  --method        Inflow calculation method (e.g: "MME")
+    -d  --dir           Raincell file generation location (e.g: "C:\\udp_150\\2019-09-23")
+    -M  --method        Raincell calculation method (e.g: "MME")
     """
     print(usageText)
 

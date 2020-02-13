@@ -188,14 +188,14 @@ def usage():
     ------------------------------------------
     Prepare outflow for Flo2D 250 & Flo2D 150
     ------------------------------------------
-    Usage: .\input\outflow\gen_outflow.py [-m flo2d_XXX] [-s "YYYY-MM-DD HH:MM:SS"] [-e "YYYY-MM-DD HH:MM:SS"]
+    Usage: .\input\outflow\gen_outflow.py [-m flo2d_XXX] [-s "YYYY-MM-DD HH:MM:SS"] [-e "YYYY-MM-DD HH:MM:SS"] [-d "directory_path"] [-M XXX]
 
     -h  --help          Show usage
     -m  --model         FLO2D model (e.g. flo2d_250, flo2d_150). Default is flo2d_250.
     -s  --start_time    Outflow start time (e.g: "2019-06-05 00:00:00"). Default is 00:00:00, 2 days before today.
     -e  --end_time      Outflow end time (e.g: "2019-06-05 23:00:00"). Default is 00:00:00, tomorrow.
-    -d  --dir           Inflow file generation location (e.g: "C:\\udp_150\\2019-09-23")
-    -M  --method        Inflow calculation method (e.g: "MME", "TSF")
+    -d  --dir           Outflow file generation location (e.g: "C:\\udp_150\\2019-09-23")
+    -M  --method        Outflow calculation method (e.g: "MME", "TSF")
     """
     print(usageText)
 

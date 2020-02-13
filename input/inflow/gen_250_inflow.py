@@ -143,7 +143,7 @@ def usage():
     Prepare inflow for Flo2D 250
     -----------------------------
     
-    Usage: .\input\inflow\gen_250_inflow.py [-s "YYYY-MM-DD HH:MM:SS"] [-e "YYYY-MM-DD HH:MM:SS"]
+    Usage: .\input\inflow\gen_250_inflow.py [-s "YYYY-MM-DD HH:MM:SS"] [-e "YYYY-MM-DD HH:MM:SS"] [-d "directory_path"] [-M XXX]
 
     -h  --help          Show usage
     -s  --start_time    Inflow start time (e.g: "2019-06-05 00:00:00"). Default is 00:00:00, 2 days before today.
