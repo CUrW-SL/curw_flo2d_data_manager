@@ -319,8 +319,7 @@ if __name__ == "__main__":
 
         # run_date = in_run_time.strftime("%Y-%m-%d")
         # run_time = in_run_time.strftime("%H:%M:%S")
-        data_extraction_start = (datetime.strptime(in_ts_start_time, COMMON_DATE_TIME_FORMAT) + timedelta(minutes=15)) \
-            .strftime(COMMON_DATE_TIME_FORMAT)
+        data_extraction_start = (in_ts_start_time + timedelta(minutes=15)).strftime(COMMON_DATE_TIME_FORMAT)
         run_date = data_extraction_start.split(' ')[0]
         run_time = data_extraction_start.split(' ')[1]
 
