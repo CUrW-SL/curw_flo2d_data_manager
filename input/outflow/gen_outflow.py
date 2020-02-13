@@ -232,6 +232,7 @@ if __name__ == "__main__":
         start_time = None
         end_time = None
         flo2d_model = None
+        # for both 150 and 250 models, curw_sim timeseies populated for 250 is used
         method = None
         output_dir = None
         file_name = 'OUTFLOW.DAT'
@@ -267,7 +268,7 @@ if __name__ == "__main__":
         if method is None:
             tide_id = read_attribute_from_config_file('tide_id', config, True)
         else:
-            tide_id = get_curw_sim_tidal_id(pool=curw_sim_pool, method=method, model=flo2d_model, grid_id=GRID_ID)
+            tide_id = get_curw_sim_tidal_id(pool=curw_sim_pool, method=method, grid_id=GRID_ID, model="flo2d_250")
 
         print(tide_id)
 
