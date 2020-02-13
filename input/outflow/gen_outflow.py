@@ -206,7 +206,7 @@ if __name__ == "__main__":
 
     """ formats to be changed as follows
     {
-      "tide_ids": {
+      "tide_ids_150": {
                     "356": "a7df14e51984a57aceb4075c4d4b6e1c952ec54249ad1d10a3d4797e9f71b626",
                     "497": "a7df14e51984a57aceb4075c4d4b6e1c952ec54249ad1d10a3d4797e9f71b626",
                     "568": "a7df14e51984a57aceb4075c4d4b6e1c952ec54249ad1d10a3d4797e9f71b626",
@@ -215,7 +215,7 @@ if __name__ == "__main__":
     }
     
     {
-      "GRID_IDs": {
+      "GRID_IDs_150": {
                     "356": "tide_colombo",
                     "497": "tide_colombo",
                     "568": "tide_colombo",

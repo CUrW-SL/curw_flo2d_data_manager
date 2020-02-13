@@ -22,6 +22,14 @@ def append_to_file(file_name, data):
         f.write('\n'.join(data))
 
 
+def makedir_if_not_exist_given_filepath(filename):
+    if not os.path.exists(os.path.dirname(filename)):
+        try:
+            os.makedirs(os.path.dirname(filename))
+        except OSError as exc:  # Guard against race condition
+            pass
+
+
 def check_time_format(time, model):
     try:
         time = datetime.strptime(time, DATE_TIME_FORMAT)
@@ -140,6 +148,8 @@ def usage():
     -m  --model         FLO2D model (e.g. flo2d_250, flo2d_150). Default is flo2d_250.
     -s  --start_time    Raincell start time (e.g: "2019-06-05 00:00:00"). Default is 23:30:00, 3 days before today.
     -e  --end_time      Raincell end time (e.g: "2019-06-05 23:30:00"). Default is 23:30:00, tomorrow.
+    -d  --dir           Inflow file generation location (e.g: "C:\\udp_150\\2019-09-23")
+    -M  --method        Inflow calculation method (e.g: "MME")
     """
     print(usageText)
 
@@ -152,10 +162,13 @@ if __name__=="__main__":
         start_time = None
         end_time = None
         flo2d_model = None
+        method = "MME"
+        output_dir = None
+        file_name = 'RAINCELL.DAT'
 
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:e:",
-                    ["help", "flo2d_model=", "start_time=", "end_time="])
+            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:e:d:M:",
+                    ["help", "flo2d_model=", "start_time=", "end_time=", "dir=", "method="])
         except getopt.GetoptError:
             usage()
             sys.exit(2)
@@ -169,6 +182,10 @@ if __name__=="__main__":
                 start_time = arg.strip()
             elif opt in ("-e", "--end_time"):
                 end_time = arg.strip()
+            elif opt in ("-d", "--dir"):
+                output_dir = arg.strip()
+            elif opt in ("-M", "--method"):
+                method = arg.strip()
 
         if flo2d_model is None:
             flo2d_model = "flo2d_250"
@@ -187,13 +204,19 @@ if __name__=="__main__":
             check_time_format(time=end_time, model=flo2d_model)
 
 
-        raincell_file_path = os.path.join(r"D:\raincell",
-                'RAINCELL_{}_{}_{}.DAT'.format(flo2d_model, start_time, end_time).replace(' ', '_').replace(':', '-'))
+        if output_dir is not None:
+            raincell_file_path = os.path.join(output_dir, file_name)
+        else:
+            raincell_file_path = os.path.join(r"D:\raincell",
+                                              'RAINCELL_{}_{}_{}.DAT'.format(flo2d_model, start_time, end_time).replace(
+                                                  ' ', '_').replace(':', '-'))
+
+        makedir_if_not_exist_given_filepath(raincell_file_path)
 
         if not os.path.isfile(raincell_file_path):
             print("{} start preparing raincell".format(datetime.now()))
             prepare_raincell(raincell_file_path,
-                    target_model=flo2d_model, start_time=start_time, end_time=end_time)
+                    target_model=flo2d_model, start_time=start_time, end_time=end_time, interpolation_method=method)
             # print(raincell_file_path, flo2d_model, start_time, end_time)
             print("{} completed preparing raincell".format(datetime.now()))
         else:
