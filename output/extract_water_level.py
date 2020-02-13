@@ -19,6 +19,7 @@ from db_adapter.curw_fcst.variable import get_variable_id
 from db_adapter.curw_fcst.unit import get_unit_id, UnitType
 from db_adapter.curw_fcst.station import get_flo2d_output_stations, StationEnum
 from db_adapter.curw_fcst.timeseries import Timeseries
+from db_adapter.curw_fcst.timeseries import insert_run_metadata
 
 ROOT_DIRECTORY = 'D:\curw_flo2d_data_manager'
 flo2d_stations = { }
@@ -508,7 +509,7 @@ if __name__ == "__main__":
             traceback.print_exc()
             exit(1)
 
-        fgt = get_file_last_modified_time(timdep_file_path)
+        # fgt = get_file_last_modified_time(timdep_file_path)
 
         print('Extract Flood Plain Water Level Result of FLO2D (TIMEDEP.OUT) on', run_date, '@', run_time,
                 'with Base time of', ts_start_date,
@@ -563,6 +564,8 @@ if __name__ == "__main__":
                 save_forecast_timeseries_to_db(pool=pool, timeseries=waterLevelSeriesDict[elementNo],
                         run_date=run_date, run_time=run_time, opts=opts, flo2d_stations=flo2d_stations, fgt=fgt)
 
+        run_info = json.loads(open(os.path.join(os.path.dirname(hychan_out_file_path), "run_meta.json")).read())
+        insert_run_metadata(pool=pool, source_id=source_id, variable_id=variable_id, sim_tag=sim_tag, fgt=fgt, metadata=run_info)
     except Exception as e:
         traceback.print_exc()
     finally:

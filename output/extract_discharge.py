@@ -21,6 +21,7 @@ from db_adapter.curw_fcst.variable import get_variable_id
 from db_adapter.curw_fcst.unit import get_unit_id, UnitType
 from db_adapter.curw_fcst.station import get_flo2d_output_stations, StationEnum
 from db_adapter.curw_fcst.timeseries import Timeseries
+from db_adapter.curw_fcst.timeseries import insert_run_metadata
 
 ROOT_DIRECTORY = 'D:\curw_flo2d_data_manager'
 flo2d_stations = { }
@@ -497,6 +498,8 @@ if __name__ == "__main__":
                 # -- END for loop
             # -- END while loop
 
+        run_info = json.loads(open(os.path.join(os.path.dirname(hychan_out_file_path), "run_meta.json")).read())
+        insert_run_metadata(pool=pool, source_id=source_id, variable_id=variable_id, sim_tag=sim_tag, fgt=fgt, metadata=run_info)
     except Exception as e:
         traceback.print_exc()
     finally:
