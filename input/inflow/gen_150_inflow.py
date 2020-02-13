@@ -18,6 +18,24 @@ from db_adapter.curw_sim.timeseries import get_curw_sim_discharge_id
 from db_adapter.curw_sim.timeseries.discharge import Timeseries as DisTS
 
 
+def save_metadata_to_file(input_filepath, metadata):
+
+    metadata_filepath = os.path.join(os.path.dirname(input_filepath), "run_meta.json")
+
+    updated_metadata = {}
+    try:
+        existing_metadata = json.loads(open(metadata_filepath).read())
+        updated_metadata = existing_metadata
+    except FileNotFoundError as eFNFE:
+        pass
+
+    for key in metadata.keys():
+        updated_metadata[key] = metadata[key]
+
+    with open(metadata_filepath, 'w') as outfile:
+        json.dump(updated_metadata, outfile)
+
+
 def write_to_file(file_name, data):
     with open(file_name, 'w+') as f:
         f.write('\n'.join(data))
@@ -200,6 +218,14 @@ if __name__ == "__main__":
             print("{} start preparing inflow".format(datetime.now()))
             prepare_inflow_150(inflow_file_path, start=start_time, end=end_time, discharge_id=discharge_id,
                                curw_sim_pool=curw_sim_pool)
+            metadata = {
+                "inflow": {
+                    "tag": method,
+                    "model": flo2d_model,
+                    "discharge_id": discharge_id
+                }
+            }
+            save_metadata_to_file(input_filepath=inflow_file_path, metadata=metadata)
             print("{} completed preparing inflow".format(datetime.now()))
         else:
             print('Inflow file already in path : ', inflow_file_path)
