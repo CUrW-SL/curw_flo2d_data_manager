@@ -14,6 +14,7 @@ from db_adapter.base import get_Pool, destroy_Pool
 from db_adapter.constants import set_db_config_file_path
 from db_adapter.constants import connection as con_params
 # from db_adapter.constants import CURW_SIM_DATABASE, CURW_SIM_HOST, CURW_SIM_PASSWORD, CURW_SIM_PORT, CURW_SIM_USERNAME
+from db_adapter.curw_sim.timeseries import get_curw_sim_tidal_id
 from db_adapter.curw_sim.timeseries.tide import Timeseries as TideTS
 
 
@@ -31,6 +32,14 @@ def append_file_to_file(file_name, file_content):
     with open(file_name, 'a+') as f:
         f.write('\n')
         f.write(file_content)
+
+
+def makedir_if_not_exist_given_filepath(filename):
+    if not os.path.exists(os.path.dirname(filename)):
+        try:
+            os.makedirs(os.path.dirname(filename))
+        except OSError as exc:  # Guard against race condition
+            pass
 
 
 def read_attribute_from_config_file(attribute, config, compulsory=False):
@@ -68,15 +77,9 @@ def check_time_format(time):
         exit(1)
 
 
-def prepare_outflow_250(outflow_file_path, start, end, tide_id):
-
+def prepare_outflow_250(outflow_file_path, start, end, tide_id, curw_sim_pool):
 
     try:
-
-        curw_sim_pool = get_Pool(host=con_params.CURW_SIM_HOST, user=con_params.CURW_SIM_USERNAME,
-                                 password=con_params.CURW_SIM_PASSWORD, port=con_params.CURW_SIM_PORT,
-                                 db=con_params.CURW_SIM_DATABASE)
-
         TS = TideTS(pool=curw_sim_pool)
         tide_ts = TS.get_timeseries(id_=tide_id, start_date=start, end_date=end)
 
@@ -121,15 +124,9 @@ def prepare_outflow_250(outflow_file_path, start, end, tide_id):
         print("Outflow generated")
 
 
-def prepare_outflow_150(outflow_file_path, start, end, tide_id):
-
+def prepare_outflow_150(outflow_file_path, start, end, tide_id, curw_sim_pool):
 
     try:
-
-        curw_sim_pool = get_Pool(host=con_params.CURW_SIM_HOST, user=con_params.CURW_SIM_USERNAME,
-                                 password=con_params.CURW_SIM_PASSWORD, port=con_params.CURW_SIM_PORT,
-                                 db=con_params.CURW_SIM_DATABASE)
-
         TS = TideTS(pool=curw_sim_pool)
         tide_ts = TS.get_timeseries(id_=tide_id, start_date=start, end_date=end)
 
@@ -197,6 +194,8 @@ def usage():
     -m  --model         FLO2D model (e.g. flo2d_250, flo2d_150). Default is flo2d_250.
     -s  --start_time    Outflow start time (e.g: "2019-06-05 00:00:00"). Default is 00:00:00, 2 days before today.
     -e  --end_time      Outflow end time (e.g: "2019-06-05 23:00:00"). Default is 00:00:00, tomorrow.
+    -d  --dir           Inflow file generation location (e.g: "C:\\udp_150\\2019-09-23")
+    -M  --method        Inflow calculation method (e.g: "MME", "TSF")
     """
     print(usageText)
 
@@ -205,15 +204,41 @@ if __name__ == "__main__":
 
     set_db_config_file_path(os.path.join(ROOT_DIRECTORY, 'db_adapter_config.json'))
 
+    """ formats to be changed as follows
+    {
+      "tide_ids": {
+                    "356": "a7df14e51984a57aceb4075c4d4b6e1c952ec54249ad1d10a3d4797e9f71b626",
+                    "497": "a7df14e51984a57aceb4075c4d4b6e1c952ec54249ad1d10a3d4797e9f71b626",
+                    "568": "a7df14e51984a57aceb4075c4d4b6e1c952ec54249ad1d10a3d4797e9f71b626",
+                    "1330": "a7df14e51984a57aceb4075c4d4b6e1c952ec54249ad1d10a3d4797e9f71b626"
+                }
+    }
+    
+    {
+      "GRID_IDs": {
+                    "356": "tide_colombo",
+                    "497": "tide_colombo",
+                    "568": "tide_colombo",
+                    "1330": "tide_colombo"
+                }
+    }
+    
+    """
+
     try:
+
+        GRID_ID = "tide_colombo"
 
         start_time = None
         end_time = None
         flo2d_model = None
+        method = None
+        output_dir = None
+        file_name = 'OUTFLOW.DAT'
 
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:e:",
-                                       ["help", "flo2d_model=", "start_time=", "end_time="])
+            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:e:d:M:",
+                                       ["help", "flo2d_model=", "start_time=", "end_time=", "dir=", "method="])
         except getopt.GetoptError:
             usage()
             sys.exit(2)
@@ -227,14 +252,24 @@ if __name__ == "__main__":
                 start_time = arg.strip()
             elif opt in ("-e", "--end_time"):
                 end_time = arg.strip()
+            elif opt in ("-d", "--dir"):
+                output_dir = arg.strip()
+            elif opt in ("-M", "--method"):
+                method = arg.strip()
 
         # Load config details and db connection params
         config = json.loads(open(os.path.join(ROOT_DIRECTORY, "input", "outflow", "config.json")).read())
 
-        output_dir = read_attribute_from_config_file('output_dir', config)
-        file_name = read_attribute_from_config_file('output_file_name', config)
+        curw_sim_pool = get_Pool(host=con_params.CURW_SIM_HOST, user=con_params.CURW_SIM_USERNAME,
+                                 password=con_params.CURW_SIM_PASSWORD, port=con_params.CURW_SIM_PORT,
+                                 db=con_params.CURW_SIM_DATABASE)
 
-        tide_id = read_attribute_from_config_file('tide_id', config, True)
+        if method is None:
+            tide_id = read_attribute_from_config_file('tide_id', config, True)
+        else:
+            tide_id = get_curw_sim_tidal_id(pool=curw_sim_pool, method=method, model=flo2d_model, grid_id=GRID_ID)
+
+        print(tide_id)
 
         if flo2d_model is None:
             flo2d_model = "flo2d_250"
@@ -252,18 +287,22 @@ if __name__ == "__main__":
         else:
             check_time_format(time=end_time)
 
-        if output_dir is not None and file_name is not None:
+        if output_dir is not None:
             outflow_file_path = os.path.join(output_dir, file_name)
         else:
             outflow_file_path = os.path.join(r"D:\outflow",
-                                          '{}_{}_{}_{}.DAT'.format(file_name, flo2d_model, start_time, end_time).replace(' ', '_').replace(':', '-'))
+                                          'OUTFLOW_{}_{}_{}.DAT'.format(flo2d_model, start_time, end_time).replace(' ', '_').replace(':', '-'))
+
+        makedir_if_not_exist_given_filepath(outflow_file_path)
 
         if not os.path.isfile(outflow_file_path):
             print("{} start preparing outflow".format(datetime.now()))
             if flo2d_model == "flo2d_250":
-                prepare_outflow_250(outflow_file_path, start=start_time, end=end_time, tide_id=tide_id)
+                prepare_outflow_250(outflow_file_path, start=start_time, end=end_time, tide_id=tide_id,
+                                    curw_sim_pool=curw_sim_pool)
             elif flo2d_model == "flo2d_150":
-                prepare_outflow_150(outflow_file_path, start=start_time, end=end_time, tide_id=tide_id)
+                prepare_outflow_150(outflow_file_path, start=start_time, end=end_time, tide_id=tide_id,
+                                    curw_sim_pool=curw_sim_pool)
             print("{} completed preparing outflow".format(datetime.now()))
         else:
             print('Outflow file already in path : ', outflow_file_path)
