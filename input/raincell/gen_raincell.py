@@ -238,7 +238,7 @@ if __name__=="__main__":
                     target_model=flo2d_model, start_time=start_time, end_time=end_time, interpolation_method=method)
             # print(raincell_file_path, flo2d_model, start_time, end_time)
             metadata = {
-                "inflow": {
+                "raincell": {
                     "tag": method,
                     "model": flo2d_model
                 }

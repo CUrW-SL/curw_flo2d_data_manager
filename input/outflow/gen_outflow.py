@@ -323,10 +323,10 @@ if __name__ == "__main__":
                 prepare_outflow_150(outflow_file_path, start=start_time, end=end_time, tide_id=tide_id,
                                     curw_sim_pool=curw_sim_pool)
             metadata = {
-                "inflow": {
+                "outflow": {
                     "tag": method,
                     "model": flo2d_model,
-                    "discharge_id": tide_id
+                    "tide_id": tide_id
                 }
             }
             save_metadata_to_file(input_filepath=outflow_file_path, metadata=metadata)
