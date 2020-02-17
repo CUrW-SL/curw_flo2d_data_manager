@@ -148,14 +148,28 @@ def prepare_chan(chan_file_path, start, flo2d_model):
             dwn_strm_default = chan_body[i+1].split()[1]
             grid_id = "{}_{}_{}".format(flo2d_model, up_strm, dwn_strm)
             wl_id = initial_conditions.get(grid_id)[2]
+            wl_id_dwn_strm = initial_conditions.get(grid_id)[2]
             offset = (datetime.strptime(start, DATE_TIME_FORMAT) + timedelta(hours=2)).strftime(DATE_TIME_FORMAT)
             water_level = getWL(connection=obs_connection, wl_id=wl_id, start_date=start, end_date=offset)
-            if water_level is None:
-                chan_processed_body.append("{}{}".format(up_strm.ljust(6), (str(up_strm_default)).rjust(6)))
-                chan_processed_body.append("{}{}".format(dwn_strm.ljust(6), (str(dwn_strm_default)).rjust(6)))
+            water_level_dwn_strm = getWL(connection=obs_connection, wl_id=wl_id_dwn_strm, start_date=start, end_date=offset)
+
+            if wl_id_dwn_strm is None:
+                if water_level is None:
+                    chan_processed_body.append("{}{}".format(up_strm.ljust(6), (str(up_strm_default)).rjust(6)))
+                    chan_processed_body.append("{}{}".format(dwn_strm.ljust(6), (str(dwn_strm_default)).rjust(6)))
+                else:
+                    chan_processed_body.append("{}{}".format(up_strm.ljust(6), (str(water_level)).rjust(6)))
+                    chan_processed_body.append("{}{}".format(dwn_strm.ljust(6), (str(water_level)).rjust(6)))
             else:
-                chan_processed_body.append("{}{}".format(up_strm.ljust(6), (str(water_level)).rjust(6)))
-                chan_processed_body.append("{}{}".format(dwn_strm.ljust(6), (str(water_level)).rjust(6)))
+                if water_level is None:
+                    chan_processed_body.append("{}{}".format(up_strm.ljust(6), (str(up_strm_default)).rjust(6)))
+                else:
+                    chan_processed_body.append("{}{}".format(up_strm.ljust(6), (str(water_level)).rjust(6)))
+                if water_level_dwn_strm is None:
+                    chan_processed_body.append("{}{}".format(dwn_strm.ljust(6), (str(dwn_strm_default)).rjust(6)))
+                else:
+                    chan_processed_body.append("{}{}".format(dwn_strm.ljust(6), (str(water_level_dwn_strm)).rjust(6)))
+
             i += 2
 
         append_to_file(chan_file_path, data=chan_processed_body)
