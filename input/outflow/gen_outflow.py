@@ -95,18 +95,31 @@ def check_time_format(time):
         exit(1)
 
 
-def prepare_outflow_250(outflow_file_path, start, end, tide_id, curw_sim_pool):
-
+def prepare_tide_data_set(curw_sim_pool, method, grid_id, model, start, end):
     try:
         TS = TideTS(pool=curw_sim_pool)
-        tide_ts = TS.get_timeseries(id_=tide_id, start_date=start, end_date=end)
 
+        tide_id = get_curw_sim_tidal_id(pool=curw_sim_pool, method=method, grid_id=grid_id, model="flo2d_250")
+
+        tide_ts = TS.get_timeseries(id_=tide_id, start_date=start, end_date=end)
         tide_data = []
-        timeseries = tide_ts
-        for i in range(len(timeseries)):
-            time_col = (str('%.3f' % (((timeseries[i][0] - timeseries[0][0]).total_seconds()) / 3600))).rjust(16)
-            value_col = (str('%.3f' % (timeseries[i][1]))).rjust(16)
+
+        for i in range(len(tide_ts)):
+            time_col = (str('%.3f' % (((tide_ts[i][0] - tide_ts[0][0]).total_seconds()) / 3600))).rjust(16)
+            value_col = (str('%.3f' % (tide_ts[i][1]))).rjust(16)
             tide_data.append('S' + time_col + value_col)
+        return tide_data
+
+    except Exception as e:
+        print(traceback.print_exc())
+
+
+def prepare_outflow_250(outflow_file_path, start, end, tide_config, method, model):
+
+    try:
+        curw_sim_pool = get_Pool(host=con_params.CURW_SIM_HOST, user=con_params.CURW_SIM_USERNAME,
+                                 password=con_params.CURW_SIM_PASSWORD, port=con_params.CURW_SIM_PORT,
+                                 db=con_params.CURW_SIM_DATABASE)
 
         outflow = []
 
@@ -116,15 +129,23 @@ def prepare_outflow_250(outflow_file_path, start, end, tide_id, curw_sim_pool):
         outflow.append('K             491')
 
         outflow.append('N             134               1')
+        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method,grid_id=tide_config.get('134'),
+                                          model=model, start=start, end=end)
         outflow.extend(tide_data)
 
         outflow.append('N             220               1')
+        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config.get('220'),
+                                          model=model, start=start, end=end)
         outflow.extend(tide_data)
 
         outflow.append('N             261               1')
+        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config.get('261'),
+                                          model=model, start=start, end=end)
         outflow.extend(tide_data)
 
         outflow.append('N             558               1')
+        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config.get('558'),
+                                          model=model, start=start, end=end)
         outflow.extend(tide_data)
 
         write_to_file(outflow_file_path, data=outflow)
@@ -142,18 +163,12 @@ def prepare_outflow_250(outflow_file_path, start, end, tide_id, curw_sim_pool):
         print("Outflow generated")
 
 
-def prepare_outflow_150(outflow_file_path, start, end, tide_id, curw_sim_pool):
+def prepare_outflow_150(outflow_file_path, start, end, tide_config, method, model):
 
     try:
-        TS = TideTS(pool=curw_sim_pool)
-        tide_ts = TS.get_timeseries(id_=tide_id, start_date=start, end_date=end)
-
-        tide_data = []
-        timeseries = tide_ts
-        for i in range(len(timeseries)):
-            time_col = (str('%.3f' % (((timeseries[i][0] - timeseries[0][0]).total_seconds()) / 3600))).rjust(16)
-            value_col = (str('%.3f' % (timeseries[i][1]))).rjust(16)
-            tide_data.append('S' + time_col + value_col)
+        curw_sim_pool = get_Pool(host=con_params.CURW_SIM_HOST, user=con_params.CURW_SIM_USERNAME,
+                                 password=con_params.CURW_SIM_PASSWORD, port=con_params.CURW_SIM_PORT,
+                                 db=con_params.CURW_SIM_DATABASE)
 
         outflow = []
 
@@ -163,15 +178,23 @@ def prepare_outflow_150(outflow_file_path, start, end, tide_id, curw_sim_pool):
         outflow.append('K            1218')
 
         outflow.append('N             356               1')
+        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config.get('356'),
+                                          model=model, start=start, end=end)
         outflow.extend(tide_data)
 
         outflow.append('N             497               1')
+        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config.get('497'),
+                                          model=model, start=start, end=end)
         outflow.extend(tide_data)
 
         outflow.append('N             568               1')
+        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config.get('568'),
+                                          model=model, start=start, end=end)
         outflow.extend(tide_data)
 
         outflow.append('N            1330               1')
+        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config.get('1330'),
+                                          model=model, start=start, end=end)
         outflow.extend(tide_data)
 
         write_to_file(outflow_file_path, data=outflow)
@@ -206,7 +229,8 @@ def usage():
     ------------------------------------------
     Prepare outflow for Flo2D 250 & Flo2D 150
     ------------------------------------------
-    Usage: .\input\outflow\gen_outflow.py [-m flo2d_XXX] [-s "YYYY-MM-DD HH:MM:SS"] [-e "YYYY-MM-DD HH:MM:SS"] [-d "directory_path"] [-M XXX]
+    Usage: .\input\outflow\gen_outflow.py [-m flo2d_XXX] [-s "YYYY-MM-DD HH:MM:SS"] [-e "YYYY-MM-DD HH:MM:SS"] [-d "directory_path"] 
+    [-M XXX] [-g XXXXXXXXX]
 
     -h  --help          Show usage
     -m  --model         FLO2D model (e.g. flo2d_250, flo2d_150). Default is flo2d_250.
@@ -214,6 +238,7 @@ def usage():
     -e  --end_time      Outflow end time (e.g: "2019-06-05 23:00:00"). Default is 00:00:00, tomorrow.
     -d  --dir           Outflow file generation location (e.g: "C:\\udp_150\\2019-09-23")
     -M  --method        Outflow calculation method (e.g: "MME", "TSF")
+    -c  --tide_config   Tidal id - grid configuration name (e.g: "tide_ids_150"). Default is "tide_ids_[flo2d version]".
     """
     print(usageText)
 
@@ -224,16 +249,7 @@ if __name__ == "__main__":
 
     """ formats to be changed as follows
     {
-      "tide_ids_150": {
-                    "356": "a7df14e51984a57aceb4075c4d4b6e1c952ec54249ad1d10a3d4797e9f71b626",
-                    "497": "a7df14e51984a57aceb4075c4d4b6e1c952ec54249ad1d10a3d4797e9f71b626",
-                    "568": "a7df14e51984a57aceb4075c4d4b6e1c952ec54249ad1d10a3d4797e9f71b626",
-                    "1330": "a7df14e51984a57aceb4075c4d4b6e1c952ec54249ad1d10a3d4797e9f71b626"
-                }
-    }
-    
-    {
-      "GRID_IDs_150": {
+      "tide_ids_150_v1": {
                     "356": "tide_colombo",
                     "497": "tide_colombo",
                     "568": "tide_colombo",
@@ -241,23 +257,32 @@ if __name__ == "__main__":
                 }
     }
     
+    {
+      "tide_ids_150": {
+                    "356": "tide_colombo",
+                    "497": "tide_colombo",
+                    "568": "tide_colombo",
+                    "1330": "tide_mattakkuliya"
+                }
+    }
+    
     """
 
     try:
-
-        GRID_ID = "tide_colombo"
 
         start_time = None
         end_time = None
         flo2d_model = None
         # for both 150 and 250 models, curw_sim timeseies populated for 250 is used
-        method = None
+        method = "TSF"
         output_dir = None
         file_name = 'OUTFLOW.DAT'
+        tide_config = None
 
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:e:d:M:",
-                                       ["help", "flo2d_model=", "start_time=", "end_time=", "dir=", "method="])
+            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:e:d:M:c:",
+                                       ["help", "flo2d_model=", "start_time=", "end_time=", "dir=", "method=",
+                                        "tide_config="])
         except getopt.GetoptError:
             usage()
             sys.exit(2)
@@ -275,20 +300,8 @@ if __name__ == "__main__":
                 output_dir = arg.strip()
             elif opt in ("-M", "--method"):
                 method = arg.strip()
-
-        # Load config details and db connection params
-        config = json.loads(open(os.path.join(ROOT_DIRECTORY, "input", "outflow", "config.json")).read())
-
-        curw_sim_pool = get_Pool(host=con_params.CURW_SIM_HOST, user=con_params.CURW_SIM_USERNAME,
-                                 password=con_params.CURW_SIM_PASSWORD, port=con_params.CURW_SIM_PORT,
-                                 db=con_params.CURW_SIM_DATABASE)
-
-        if method is None:
-            tide_id = read_attribute_from_config_file('tide_id', config, True)
-        else:
-            tide_id = get_curw_sim_tidal_id(pool=curw_sim_pool, method=method, grid_id=GRID_ID, model="flo2d_250")
-
-        print(tide_id)
+            elif opt in ("-c", "--tide_config"):
+                tide_config = arg.strip()
 
         if flo2d_model is None:
             flo2d_model = "flo2d_250"
@@ -314,19 +327,28 @@ if __name__ == "__main__":
 
         makedir_if_not_exist_given_filepath(outflow_file_path)
 
+        flo2d_version = flo2d_model.split('_')[1]
+
+        # Load config details and db connection params
+        config = json.loads(open(os.path.join(ROOT_DIRECTORY, "input", "outflow", "config_{}.json"
+                                              .format(flo2d_version))).read())
+
+        if tide_config is None:
+            tide_config = "tide_ids_{}".format(flo2d_version)
+
         if not os.path.isfile(outflow_file_path):
             print("{} start preparing outflow".format(datetime.now()))
             if flo2d_model == "flo2d_250":
-                prepare_outflow_250(outflow_file_path, start=start_time, end=end_time, tide_id=tide_id,
-                                    curw_sim_pool=curw_sim_pool)
+                prepare_outflow_250(outflow_file_path, start=start_time, end=end_time, tide_config=tide_config,
+                                    method=method, model=flo2d_model)
             elif flo2d_model == "flo2d_150":
-                prepare_outflow_150(outflow_file_path, start=start_time, end=end_time, tide_id=tide_id,
-                                    curw_sim_pool=curw_sim_pool)
+                prepare_outflow_150(outflow_file_path, start=start_time, end=end_time, tide_config=tide_config,
+                                    method=method, model=flo2d_model)
             metadata = {
                 "outflow": {
                     "tag": method,
                     "model": flo2d_model,
-                    "tide_id": tide_id
+                    "tide_ids": json.dumps(tide_config)
                 }
             }
             save_metadata_to_file(input_filepath=outflow_file_path, metadata=metadata)

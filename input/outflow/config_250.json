@@ -1,0 +1,14 @@
+{
+  "tide_ids_250_v1": {
+    "134": "tide_colombo",
+    "220": "tide_colombo",
+    "261": "tide_colombo",
+    "558": "tide_colombo"
+  },
+  "tide_ids_250": {
+    "134": "tide_wellawatta",
+    "220": "tide_wellawatta",
+    "261": "tide_wellawatta",
+    "558": "tide_mattakkuliya"
+  }
+}
