@@ -114,7 +114,7 @@ def prepare_tide_data_set(curw_sim_pool, method, grid_id, model, start, end):
         print(traceback.print_exc())
 
 
-def prepare_outflow_250(outflow_file_path, start, end, tide_config, method, model):
+def prepare_outflow_250(outflow_file_path, start, end, tide_config_dict, method, model):
 
     try:
         curw_sim_pool = get_Pool(host=con_params.CURW_SIM_HOST, user=con_params.CURW_SIM_USERNAME,
@@ -129,22 +129,22 @@ def prepare_outflow_250(outflow_file_path, start, end, tide_config, method, mode
         outflow.append('K             491')
 
         outflow.append('N             134               1')
-        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method,grid_id=tide_config.get('134'),
+        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config_dict.get('134'),
                                           model=model, start=start, end=end)
         outflow.extend(tide_data)
 
         outflow.append('N             220               1')
-        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config.get('220'),
+        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config_dict.get('220'),
                                           model=model, start=start, end=end)
         outflow.extend(tide_data)
 
         outflow.append('N             261               1')
-        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config.get('261'),
+        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config_dict.get('261'),
                                           model=model, start=start, end=end)
         outflow.extend(tide_data)
 
         outflow.append('N             558               1')
-        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config.get('558'),
+        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config_dict.get('558'),
                                           model=model, start=start, end=end)
         outflow.extend(tide_data)
 
@@ -163,7 +163,7 @@ def prepare_outflow_250(outflow_file_path, start, end, tide_config, method, mode
         print("Outflow generated")
 
 
-def prepare_outflow_150(outflow_file_path, start, end, tide_config, method, model):
+def prepare_outflow_150(outflow_file_path, start, end, tide_config_dict, method, model):
 
     try:
         curw_sim_pool = get_Pool(host=con_params.CURW_SIM_HOST, user=con_params.CURW_SIM_USERNAME,
@@ -178,22 +178,22 @@ def prepare_outflow_150(outflow_file_path, start, end, tide_config, method, mode
         outflow.append('K            1218')
 
         outflow.append('N             356               1')
-        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config.get('356'),
+        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config_dict.get('356'),
                                           model=model, start=start, end=end)
         outflow.extend(tide_data)
 
         outflow.append('N             497               1')
-        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config.get('497'),
+        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config_dict.get('497'),
                                           model=model, start=start, end=end)
         outflow.extend(tide_data)
 
         outflow.append('N             568               1')
-        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config.get('568'),
+        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config_dict.get('568'),
                                           model=model, start=start, end=end)
         outflow.extend(tide_data)
 
         outflow.append('N            1330               1')
-        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config.get('1330'),
+        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config_dict.get('1330'),
                                           model=model, start=start, end=end)
         outflow.extend(tide_data)
 
@@ -230,7 +230,7 @@ def usage():
     Prepare outflow for Flo2D 250 & Flo2D 150
     ------------------------------------------
     Usage: .\input\outflow\gen_outflow.py [-m flo2d_XXX] [-s "YYYY-MM-DD HH:MM:SS"] [-e "YYYY-MM-DD HH:MM:SS"] [-d "directory_path"] 
-    [-M XXX] [-g XXXXXXXXX]
+    [-M XXX] [-c XXXXXXXXX]
 
     -h  --help          Show usage
     -m  --model         FLO2D model (e.g. flo2d_250, flo2d_150). Default is flo2d_250.
@@ -336,13 +336,15 @@ if __name__ == "__main__":
         if tide_config is None:
             tide_config = "tide_ids_{}".format(flo2d_version)
 
+        tide_config_dict = config[tide_config]
+
         if not os.path.isfile(outflow_file_path):
             print("{} start preparing outflow".format(datetime.now()))
             if flo2d_model == "flo2d_250":
-                prepare_outflow_250(outflow_file_path, start=start_time, end=end_time, tide_config=tide_config,
+                prepare_outflow_250(outflow_file_path, start=start_time, end=end_time, tide_config_dict=tide_config_dict,
                                     method=method, model=flo2d_model)
             elif flo2d_model == "flo2d_150":
-                prepare_outflow_150(outflow_file_path, start=start_time, end=end_time, tide_config=tide_config,
+                prepare_outflow_150(outflow_file_path, start=start_time, end=end_time, tide_config_dict=tide_config_dict,
                                     method=method, model=flo2d_model)
             metadata = {
                 "outflow": {
