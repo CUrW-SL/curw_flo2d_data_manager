@@ -115,8 +115,10 @@ def prepare_raincell(raincell_file_path, start_time, end_time,
 
     if target_model=="flo2d_250":
         timestep = 5
+        water_supply = 0.1 / (24 * 12)
     elif target_model=="flo2d_150":
         timestep = 15
+        water_supply = 0.1 / (24 * 4)
 
     length = int(((end_time-start_time).total_seconds()/60)/timestep)
 
@@ -132,7 +134,6 @@ def prepare_raincell(raincell_file_path, start_time, end_time,
             with connection.cursor() as cursor1:
                 cursor1.callproc('prepare_flo2d_raincell', (target_model, interpolation_method, timestamp))
                 for result in cursor1:
-                    water_supply = 0.1
                     corrected_rain_value = float(result.get('value')) + water_supply
                     raincell.append('{} {}'.format(result.get('cell_id'), '%.1f' % corrected_rain_value))
                 raincell.append('')
