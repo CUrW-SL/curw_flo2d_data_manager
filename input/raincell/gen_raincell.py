@@ -115,10 +115,10 @@ def prepare_raincell(raincell_file_path, start_time, end_time,
 
     if target_model=="flo2d_250":
         timestep = 5
-        water_supply = 0.1 / (24 * 12)
+        water_supply = 1 / (24 * 12)
     elif target_model=="flo2d_150":
         timestep = 15
-        water_supply = 0.1 / (24 * 4)
+        water_supply = 1 / (24 * 4)
 
     length = int(((end_time-start_time).total_seconds()/60)/timestep)
 
