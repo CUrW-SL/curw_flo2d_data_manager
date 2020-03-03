@@ -105,9 +105,11 @@ def prepare_tide_data_set(curw_sim_pool, method, grid_id, model, start, end):
         tide_data = []
 
         for i in range(len(tide_ts)):
-            time_col = (str('%.3f' % (((tide_ts[i][0] - tide_ts[0][0]).total_seconds()) / 3600))).rjust(16)
-            value_col = (str('%.3f' % (tide_ts[i][1]))).rjust(16)
-            tide_data.append('S' + time_col + value_col)
+            value = tide_ts[i][1]
+            if int(value) != -99999:
+                time_col = (str('%.3f' % (((tide_ts[i][0] - tide_ts[0][0]).total_seconds()) / 3600))).rjust(16)
+                value_col = (str('%.3f' % (tide_ts[i][1]))).rjust(16)
+                tide_data.append('S' + time_col + value_col)
         return tide_data
 
     except Exception as e:
