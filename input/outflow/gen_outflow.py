@@ -239,7 +239,7 @@ def usage():
     -s  --start_time    Outflow start time (e.g: "2019-06-05 00:00:00"). Default is 00:00:00, 2 days before today.
     -e  --end_time      Outflow end time (e.g: "2019-06-05 23:00:00"). Default is 00:00:00, tomorrow.
     -d  --dir           Outflow file generation location (e.g: "C:\\udp_150\\2019-09-23")
-    -M  --method        Outflow calculation method (e.g: "MME", "TSF")
+    -M  --method        Outflow calculation method (e.g: "MGF", "TSF")
     -c  --tide_config   Tidal id - grid configuration name (e.g: "tide_ids_150"). Default is "tide_ids_[flo2d version]".
     """
     print(usageText)
