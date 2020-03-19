@@ -116,7 +116,7 @@ def prepare_raincell(raincell_file_path, start_time, end_time,
     if target_model=="flo2d_250":
         timestep = 5
         water_supply = 1 / (24 * 12)
-    elif target_model=="flo2d_150":
+    elif target_model in ("flo2d_150", "flo2d_150_v2"):
         timestep = 15
         water_supply = 1 / (24 * 4)
 
@@ -211,8 +211,8 @@ if __name__=="__main__":
 
         if flo2d_model is None:
             flo2d_model = "flo2d_250"
-        elif flo2d_model not in ("flo2d_250", "flo2d_150"):
-            print("Flo2d model should be either \"flo2d_250\" or \"flo2d_150\"")
+        elif flo2d_model not in ("flo2d_250", "flo2d_150", "flo2d_150_v2"):
+            print("Flo2d model should be either \"flo2d_250\" or \"flo2d_150\" or \"flo2d_150_v2\"")
             exit(1)
 
         if start_time is None:
