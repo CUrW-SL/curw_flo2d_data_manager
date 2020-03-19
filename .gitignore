@@ -107,3 +107,4 @@ ENV/
 # mypy
 .mypy_cache/
 /res/
+/db_adapter_config_event_sim.json

@@ -164,14 +164,15 @@ def usage():
     Prepare raincell for Flo2D 250 & 150
     -------------------------------------
     
-    Usage: .\input\\raincell\gen_raincell.py [-m flo2d_XXX][-s "YYYY-MM-DD HH:MM:SS"] [-e "YYYY-MM-DD HH:MM:SS"] [-d "directory_path"] [-M XXX]
+    Usage: .\input\\raincell\gen_raincell.py [-m flo2d_XXX][-s "YYYY-MM-DD HH:MM:SS"] [-e "YYYY-MM-DD HH:MM:SS"] [-d "directory_path"] [-M XXX] [-E]
     
     -h  --help          Show usage
     -m  --model         FLO2D model (e.g. flo2d_250, flo2d_150). Default is flo2d_250.
     -s  --start_time    Raincell start time (e.g: "2019-06-05 00:00:00"). Default is 23:30:00, 3 days before today.
     -e  --end_time      Raincell end time (e.g: "2019-06-05 23:30:00"). Default is 23:30:00, tomorrow.
     -d  --dir           Raincell file generation location (e.g: "C:\\udp_150\\2019-09-23")
-    -M  --method        Raincell calculation method (e.g: "MME")
+    -M  --method        Raincell calculation method (e.g: "MME", "OBS")
+    -E  --event_sim     Weather the raincell is prepared for event simulation or not (e.g. -E, --event_sim)
     """
     print(usageText)
 
@@ -187,10 +188,11 @@ if __name__=="__main__":
         method = "MME"
         output_dir = None
         file_name = 'RAINCELL.DAT'
+        event_sim = False
 
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:e:d:M:",
-                    ["help", "flo2d_model=", "start_time=", "end_time=", "dir=", "method="])
+            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:e:d:M:E:",
+                    ["help", "flo2d_model=", "start_time=", "end_time=", "dir=", "method=", "event_sim"])
         except getopt.GetoptError:
             usage()
             sys.exit(2)
@@ -208,6 +210,11 @@ if __name__=="__main__":
                 output_dir = arg.strip()
             elif opt in ("-M", "--method"):
                 method = arg.strip()
+            elif opt in ("-E", "--event_sim"):
+                event_sim = True
+
+        if event_sim:
+            set_db_config_file_path(os.path.join('D:\curw_flo2d_data_manager', 'db_adapter_config_event_sim.json'))
 
         if flo2d_model is None:
             flo2d_model = "flo2d_250"
