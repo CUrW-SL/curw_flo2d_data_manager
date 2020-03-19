@@ -191,7 +191,7 @@ if __name__=="__main__":
         event_sim = False
 
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:e:d:M:E:",
+            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:e:d:M:E",
                     ["help", "flo2d_model=", "start_time=", "end_time=", "dir=", "method=", "event_sim"])
         except getopt.GetoptError:
             usage()
