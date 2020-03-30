@@ -136,13 +136,15 @@ def usage():
     Prepare inflow for Flo2D 150
     ----------------------------
     
-    Usage: .\input\inflow\gen_150_inflow.py [-s "YYYY-MM-DD HH:MM:SS"] [-e "YYYY-MM-DD HH:MM:SS"] [-d "directory_path"] [-M XXX]
+    Usage: .\input\inflow\gen_150_inflow.py [-s "YYYY-MM-DD HH:MM:SS"] [-e "YYYY-MM-DD HH:MM:SS"] [-d "directory_path"] 
+    [-M XXX] [-E]
 
     -h  --help          Show usage
     -s  --start_time    Inflow start time (e.g: "2019-06-05 00:00:00"). Default is 00:00:00, 2 days before today.
     -e  --end_time      Inflow end time (e.g: "2019-06-05 23:00:00"). Default is 00:00:00, tomorrow.
     -d  --dir           Inflow file generation location (e.g: "C:\\udp_150\\2019-09-23")
-    -M  --method        Inflow calculation method (e.g: "MME", "SF")
+    -M  --method        Inflow calculation method (e.g: "MME", "SF", "OBS")
+    -E  --event_sim     Weather the raincell is prepared for event simulation or not (e.g. -E, --event_sim)
     """
     print(usageText)
 
@@ -161,10 +163,11 @@ if __name__ == "__main__":
         output_dir = None
         file_name = 'INFLOW.DAT'
         flo2d_model = 'flo2d_150'
+        event_sim = False
 
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "h:s:e:d:M:",
-                                       ["help", "start_time=", "end_time=", "dir=", "method="])
+            opts, args = getopt.getopt(sys.argv[1:], "h:s:e:d:M:E",
+                                       ["help", "start_time=", "end_time=", "dir=", "method=", "event_sim"])
         except getopt.GetoptError:
             usage()
             sys.exit(2)
@@ -180,6 +183,11 @@ if __name__ == "__main__":
                 output_dir = arg.strip()
             elif opt in ("-M", "--method"):
                 method = arg.strip()
+            elif opt in ("-E", "--event_sim"):
+                event_sim = True
+
+        if event_sim:
+            set_db_config_file_path(os.path.join('D:\curw_flo2d_data_manager', 'db_adapter_config_event_sim.json'))
 
         # Load config details and db connection params
         config = json.loads(open(os.path.join(ROOT_DIRECTORY, "input", "inflow", "config_150.json")).read())
