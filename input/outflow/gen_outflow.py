@@ -241,6 +241,7 @@ def usage():
     -d  --dir           Outflow file generation location (e.g: "C:\\udp_150\\2019-09-23")
     -M  --method        Outflow calculation method (e.g: "MGF", "TSF")
     -c  --tide_config   Tidal id - grid configuration name (e.g: "tide_ids_150"). Default is "tide_ids_[flo2d version]".
+    -E  --event_sim     Weather the outflow is prepared for event simulation or not (e.g. -E, --event_sim)
     """
     print(usageText)
 
@@ -280,11 +281,12 @@ if __name__ == "__main__":
         output_dir = None
         file_name = 'OUTFLOW.DAT'
         tide_config = None
+        event_sim = False
 
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:e:d:M:c:",
+            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:e:d:M:c:E",
                                        ["help", "flo2d_model=", "start_time=", "end_time=", "dir=", "method=",
-                                        "tide_config="])
+                                        "tide_config=", "event_sim"])
         except getopt.GetoptError:
             usage()
             sys.exit(2)
@@ -304,6 +306,11 @@ if __name__ == "__main__":
                 method = arg.strip()
             elif opt in ("-c", "--tide_config"):
                 tide_config = arg.strip()
+            elif opt in ("-E", "--event_sim"):
+                event_sim = True
+
+        if event_sim:
+            set_db_config_file_path(os.path.join('D:\curw_flo2d_data_manager', 'db_adapter_config_event_sim.json'))
 
         if flo2d_model is None:
             flo2d_model = "flo2d_250"
