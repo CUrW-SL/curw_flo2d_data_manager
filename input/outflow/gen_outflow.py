@@ -99,7 +99,7 @@ def prepare_tide_data_set(curw_sim_pool, method, grid_id, model, start, end):
     try:
         TS = TideTS(pool=curw_sim_pool)
 
-        tide_id = get_curw_sim_tidal_id(pool=curw_sim_pool, method=method, grid_id=grid_id, model="flo2d_250")
+        tide_id = get_curw_sim_tidal_id(pool=curw_sim_pool, method=method, grid_id=grid_id, model="flo2d")
 
         tide_ts = TS.get_timeseries(id_=tide_id, start_date=start, end_date=end)
         tide_data = []
@@ -276,7 +276,7 @@ if __name__ == "__main__":
         start_time = None
         end_time = None
         flo2d_model = None
-        # for both 150 and 250 models, curw_sim timeseies populated for 250 is used
+        # curw_sim timeseries populated for generic model "flo2d" is used for all models
         method = "TSF"
         output_dir = None
         file_name = 'OUTFLOW.DAT'
@@ -314,8 +314,8 @@ if __name__ == "__main__":
 
         if flo2d_model is None:
             flo2d_model = "flo2d_250"
-        elif flo2d_model not in ("flo2d_250", "flo2d_150"):
-            print("Flo2d model should be either \"flo2d_250\" or \"flo2d_150\"")
+        elif flo2d_model not in ("flo2d_250", "flo2d_150", "flo2d_150_v2"):
+            print("Flo2d model should be either \"flo2d_250\", \"flo2d_150\", \"flo2d_150_v2\" ")
             exit(1)
 
         if start_time is None:
