@@ -144,7 +144,7 @@ def usage():
     -e  --end_time      Inflow end time (e.g: "2019-06-05 23:00:00"). Default is 00:00:00, tomorrow.
     -d  --dir           Inflow file generation location (e.g: "C:\\udp_150\\2019-09-23")
     -M  --method        Inflow calculation method (e.g: "MME", "SF", "OBS")
-    -E  --event_sim     Weather the raincell is prepared for event simulation or not (e.g. -E, --event_sim)
+    -E  --event_sim     Weather the inflow is prepared for event simulation or not (e.g. -E, --event_sim)
     """
     print(usageText)
 
