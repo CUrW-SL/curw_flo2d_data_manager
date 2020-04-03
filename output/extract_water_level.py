@@ -217,7 +217,7 @@ def usage():
     --------------------------------------------------------------------
     
     Usage: .\output\extract_water_level.py [-m flo2d_XXX] [-s "YYYY-MM-DD HH:MM:SS"] [-r "YYYY-MM-DD HH:MM:SS"] [-t XXX]
-    [-d "C:\\udp_150\\2019-09-23"]
+    [-d "C:\\udp_150\\2019-09-23"] [-E]
 
     -h  --help          Show usage
     -m  --model         FLO2D model (e.g. flo2d_250, flo2d_150).
@@ -226,6 +226,7 @@ def usage():
     -d  --dir           Output directory (e.g. "C:\\udp_150\\2019-09-23"); 
                         Directory where HYCHAN.OUT and TIMDEP.OUT files located.
     -t  --sim_tag       Simulation tag
+    -E  --event_sim     Weather the output is from a event simulation or not (e.g. -E, --event_sim)
     """
     print(usageText)
 
@@ -260,10 +261,11 @@ if __name__ == "__main__":
         flo2d_model = None
         output_dir = None
         sim_tag = None
+        event_sim = False
 
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:r:d:t:",
-                                       ["help", "model=", "ts_start_time=", "run_time=", "dir=", "sim_tag="])
+            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:r:d:t:E",
+                                       ["help", "model=", "ts_start_time=", "run_time=", "dir=", "sim_tag=", "event_sim"])
         except getopt.GetoptError:
             usage()
             sys.exit(2)
@@ -281,6 +283,11 @@ if __name__ == "__main__":
                 output_dir = arg.strip()
             elif opt in ("-t", "--sim_tag"):
                 sim_tag = arg.strip()
+            elif opt in ("-E", "--event_sim"):
+                event_sim = True
+
+        if event_sim:
+            set_db_config_file_path(os.path.join(ROOT_DIRECTORY, 'db_adapter_config_event_sim.json'))
 
         config = json.loads(open(os.path.join(ROOT_DIRECTORY, 'output', 'wl_config.json')).read())
 

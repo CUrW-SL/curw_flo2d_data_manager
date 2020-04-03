@@ -11,6 +11,7 @@ DATE_TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 from db_adapter.constants import set_db_config_file_path
 from db_adapter.constants import connection as con_params
 # from db_adapter.constants import CURW_SIM_DATABASE, CURW_SIM_PASSWORD, CURW_SIM_USERNAME, CURW_SIM_PORT, CURW_SIM_HOST
+ROOT_DIRECTORY = 'D:\curw_flo2d_data_manager'
 
 
 def save_metadata_to_file(input_filepath, metadata):
@@ -179,7 +180,7 @@ def usage():
 
 if __name__=="__main__":
 
-    set_db_config_file_path(os.path.join('D:\curw_flo2d_data_manager', 'db_adapter_config.json'))
+    set_db_config_file_path(os.path.join(ROOT_DIRECTORY, 'db_adapter_config.json'))
 
     try:
         start_time = None
@@ -214,7 +215,7 @@ if __name__=="__main__":
                 event_sim = True
 
         if event_sim:
-            set_db_config_file_path(os.path.join('D:\curw_flo2d_data_manager', 'db_adapter_config_event_sim.json'))
+            set_db_config_file_path(os.path.join(ROOT_DIRECTORY, 'db_adapter_config_event_sim.json'))
 
         if flo2d_model is None:
             flo2d_model = "flo2d_250"

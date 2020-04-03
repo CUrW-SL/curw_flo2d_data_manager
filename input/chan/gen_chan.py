@@ -248,7 +248,7 @@ if __name__ == "__main__":
                 event_sim = True
 
         if event_sim:
-            set_db_config_file_path(os.path.join('D:\curw_flo2d_data_manager', 'db_adapter_config_event_sim.json'))
+            set_db_config_file_path(os.path.join(ROOT_DIRECTORY, 'db_adapter_config_event_sim.json'))
 
         if flo2d_model is None:
             flo2d_model = "flo2d_250"
