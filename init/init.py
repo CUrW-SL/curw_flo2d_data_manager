@@ -60,7 +60,7 @@ if __name__=="__main__":
         #####################################################
 
         # source details
-        FLO2D_150_v2_params = json.loads(open('flo2d_150_v2.json').read())
+        FLO2D_150_v2_params = json.loads(open(os.path.join(ROOT_DIRECTORY, 'res/flo2d_extract_stations/flo2d_150_v2.json')).read())
         FLO2D_model = 'FLO2D'
         FLO2D_150_v2_version = '150_v2'
 
@@ -72,7 +72,7 @@ if __name__=="__main__":
         variable = 'WaterLevel'
 
         # station details
-        flo2d_150_v2_grids = read_csv('flo2d_150_v2m.csv')
+        flo2d_150_v2_grids = read_csv(os.path.join(ROOT_DIRECTORY, 'res/grids/flo2d_150_v2m.csv'))
 
         pool = get_Pool(host=con_params.CURW_FCST_HOST, port=con_params.CURW_FCST_PORT, user=con_params.CURW_FCST_USERNAME, password=con_params.CURW_FCST_PASSWORD,
                 db=con_params.CURW_FCST_DATABASE)
