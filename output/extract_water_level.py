@@ -24,6 +24,10 @@ from db_adapter.curw_fcst.timeseries import insert_run_metadata
 ROOT_DIRECTORY = 'D:\curw_flo2d_data_manager'
 flo2d_stations = { }
 
+template_files = ["ARF.DAT","CHAN.DAT","HYSTRUC.DAT","MANNINGS_N.DAT","RAIN.DAT","TOPO.DAT",
+              "CADPTS.DAT","CONT.DAT","INFIL.DAT","NEIGHBORS.DAT","SUPPLEMENT.DAT","XSEC.DAT",
+              "CHANBANK.DAT","FPLAIN.DAT","INFLOW.DAT","OUTFLOW.DAT","TOLER.DAT"]
+
 
 def read_attribute_from_config_file(attribute, config, compulsory):
     """
@@ -40,6 +44,10 @@ def read_attribute_from_config_file(attribute, config, compulsory):
     else:
         logger.error("{} not specified in config file.".format(attribute))
         return None
+
+
+def compress_multiple_files(file_names, source_file_dir, zip_file_name):
+    os.system("cd {} && tar -cvzf {}.tar.gz {}".format(source_file_dir, zip_file_name, " ".join(file_names)))
 
 
 def get_file_last_modified_time(file_path):
@@ -262,6 +270,7 @@ if __name__ == "__main__":
         output_dir = None
         sim_tag = None
         event_sim = False
+        template_path = None
 
         try:
             opts, args = getopt.getopt(sys.argv[1:], "h:m:s:r:d:t:E",
@@ -323,6 +332,10 @@ if __name__ == "__main__":
         in_run_time = check_time_format(in_run_time)
 
         output_dir = output_dir
+
+        if event_sim:
+            compress_multiple_files(file_names=template_files, source_file_dir=output_dir, zip_file_name="template")
+            template_path = os.path.join(output_dir, "template.tar.gz")
 
         # run_date = in_run_time.strftime("%Y-%m-%d")
         # run_time = in_run_time.strftime("%H:%M:%S")
@@ -571,7 +584,8 @@ if __name__ == "__main__":
                         run_date=run_date, run_time=run_time, opts=opts, flo2d_stations=flo2d_stations, fgt=fgt)
 
         run_info = json.loads(open(os.path.join(os.path.dirname(hychan_out_file_path), "run_meta.json")).read())
-        insert_run_metadata(pool=pool, source_id=source_id, variable_id=variable_id, sim_tag=sim_tag, fgt=fgt, metadata=run_info)
+        insert_run_metadata(pool=pool, source_id=source_id, variable_id=variable_id, sim_tag=sim_tag, fgt=fgt,
+                            metadata=run_info, template_path=template_path)
     except Exception as e:
         traceback.print_exc()
     finally:
