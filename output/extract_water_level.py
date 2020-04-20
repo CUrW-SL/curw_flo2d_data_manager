@@ -220,15 +220,15 @@ def save_forecast_timeseries_to_db(pool, timeseries, run_date, run_time, opts, f
 
 def usage():
     usageText = """
-    --------------------------------------------------------------------
-    Extract Flo2D 250 & 150 output waterlevel to the curw_fcst database.
-    --------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    Extract Flo2D 250, 150 & 150_v2 output waterlevel to the curw_fcst database.
+    -----------------------------------------------------------------------------
     
     Usage: .\output\extract_water_level.py [-m flo2d_XXX] [-s "YYYY-MM-DD HH:MM:SS"] [-r "YYYY-MM-DD HH:MM:SS"] [-t XXX]
     [-d "C:\\udp_150\\2019-09-23"] [-E]
 
     -h  --help          Show usage
-    -m  --model         FLO2D model (e.g. flo2d_250, flo2d_150).
+    -m  --model         FLO2D model (e.g. flo2d_250, flo2d_150, flo2d_150_v2).
     -s  --ts_start_time Timeseries start time (e.g: "2019-06-05 23:00:00").
     -r  --run_time      Run time (e.g: "2019-06-05 23:00:00").
     -d  --dir           Output directory (e.g. "C:\\udp_150\\2019-09-23"); 
@@ -324,8 +324,8 @@ if __name__ == "__main__":
         if not os.path.isdir(output_dir):
             print("Given output directory doesn't exist")
             exit(1)
-        if flo2d_model not in ("flo2d_250", "flo2d_150"):
-            print("Flo2d model should be either \"flo2d_250\" or \"flo2d_150\"")
+        if flo2d_model not in ("flo2d_250", "flo2d_150", "flo2d_150_v2"):
+            print("Flo2d model should be either \"flo2d_250\" or \"flo2d_150\" or \"flo2d_150_v2\"")
             exit(1)
 
         in_ts_start_time = check_time_format(in_ts_start_time)
@@ -356,7 +356,7 @@ if __name__ == "__main__":
 
         # source details
         model = read_attribute_from_config_file('model', config, True)
-        version = flo2d_model.split("_")[1]
+        version = "_".join(flo2d_model.split("_")[1:])
 
         # unit details
         unit = read_attribute_from_config_file('unit', config, True)
