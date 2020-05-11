@@ -46,9 +46,12 @@ def read_attribute_from_config_file(attribute, config, compulsory):
 
 def get_file_last_modified_time(file_path):
     # returns local time (UTC + 5 30)
-    modified_time = time.gmtime(os.path.getmtime(file_path) + 19800)
 
-    return time.strftime('%Y-%m-%d %H:%M:%S', modified_time)
+    modified_time_raw = os.path.getmtime(file_path)
+    modified_time_utc = datetime.utcfromtimestamp(modified_time_raw)
+    modified_time_SL = modified_time_utc + timedelta(hours=5, minutes=30)
+
+    return modified_time_SL.strftime('%Y-%m-%d %H:%M:%S')
 
 
 def check_time_format(time):
