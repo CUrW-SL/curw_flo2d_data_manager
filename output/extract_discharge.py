@@ -155,7 +155,7 @@ def extractForecastTimeseries(timeseries, extract_date, extract_time, by_day=Fal
 
 
 def save_forecast_timeseries_to_db(pool, timeseries, run_date, run_time, opts, flo2d_stations, fgt):
-    print('EXTRACTFLO2DWATERLEVEL:: save_forecast_timeseries >>', opts)
+    print('EXTRACTFLO2DDISCHARGE:: save_forecast_timeseries >>', opts)
 
     # {
     #         'tms_id'     : '',
