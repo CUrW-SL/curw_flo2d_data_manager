@@ -60,7 +60,7 @@ def check_time_format(time, model):
         if model=="flo2d_250" and time.strftime('%M') not in ('05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '00'):
             print("Minutes should be multiple of 5 fro flo2d_250")
             exit(1)
-        if model=="flo2d_150" and time.strftime('%M') not in ('15', '30', '45', '00'):
+        if model in ("flo2d_150", "flo2d_150_v2") and time.strftime('%M') not in ('15', '30', '45', '00'):
             print("Minutes should be multiple of 15 for flo2d_150")
             exit(1)
 
