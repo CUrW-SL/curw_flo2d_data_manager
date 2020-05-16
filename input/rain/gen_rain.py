@@ -137,10 +137,10 @@ def prepare_rain(curw_sim_pool, rain_file_path, curw_sim_hash_id, start_time, en
         else:
             rain_col = '%.3f' % (0)
 
-        rain_dat.append("R" + time_col.rjust(8) + rain_col.rjust(8))
+        rain_dat.append("R              " + time_col.ljust(14) + rain_col + " ")
 
-    rain_dat.insert(0, "{}      5       0       0".format('%.3f' % total_rain))
-    rain_dat.insert(0, "0       0        ")
+    rain_dat.insert(0, " {}         5             0             0 ".format('%.3f' % total_rain))
+    rain_dat.insert(0, " 0             0 ")
 
     write_to_file(rain_file_path, rain_dat)
 
