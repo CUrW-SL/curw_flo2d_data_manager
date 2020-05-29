@@ -112,7 +112,7 @@ def check_time_format(time):
 
 def prepare_chan(chan_file_path, start, flo2d_model):
 
-    flo2d_version = flo2d_model.split('_')[1]
+    flo2d_version = "_".join(flo2d_model.split('_')[1:])
 
     try:
 
@@ -203,7 +203,7 @@ def create_dir_if_not_exists(path):
 def usage():
     usageText = """
     ------------------------------------------
-    Prepare CHAN for Flo2D 250 & Flo2D 150
+    Prepare CHAN for Flo2D 250, 150 & 150_v2
     ------------------------------------------
     Usage: .\input\chan\gen_chan.py [-m flo2d_XXX] [-s "YYYY-MM-DD HH:MM:SS"] [-d "directory_path"] [-E]
 
@@ -252,8 +252,8 @@ if __name__ == "__main__":
 
         if flo2d_model is None:
             flo2d_model = "flo2d_250"
-        elif flo2d_model not in ("flo2d_250", "flo2d_150"):
-            print("Flo2d model should be either \"flo2d_250\" or \"flo2d_150\"")
+        elif flo2d_model not in ("flo2d_250", "flo2d_150", "flo2d_150_v2"):
+            print("Flo2d model should be either \"flo2d_250\" or \"flo2d_150\" or \"flo2d_150_v2\"")
             exit(1)
 
         if start_time is None:
