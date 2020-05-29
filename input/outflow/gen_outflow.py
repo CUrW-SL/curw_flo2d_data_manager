@@ -214,6 +214,55 @@ def prepare_outflow_150(outflow_file_path, start, end, tide_config_dict, method,
         print("Outflow generated")
 
 
+def prepare_outflow_150_v2(outflow_file_path, start, end, tide_config_dict, method, model):
+
+    try:
+        curw_sim_pool = get_Pool(host=con_params.CURW_SIM_HOST, user=con_params.CURW_SIM_USERNAME,
+                                 password=con_params.CURW_SIM_PASSWORD, port=con_params.CURW_SIM_PORT,
+                                 db=con_params.CURW_SIM_DATABASE)
+
+        outflow = []
+
+        outflow.append('K             268')
+        outflow.append('K             391')
+        outflow.append('K             464')
+        outflow.append('K            1174')
+
+        outflow.append('N             330               1')
+        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config_dict.get('330'),
+                                          model=model, start=start, end=end)
+        outflow.extend(tide_data)
+
+        outflow.append('N             462               1')
+        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config_dict.get('462'),
+                                          model=model, start=start, end=end)
+        outflow.extend(tide_data)
+
+        outflow.append('N             546               1')
+        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config_dict.get('546'),
+                                          model=model, start=start, end=end)
+        outflow.extend(tide_data)
+
+        outflow.append('N            1282               1')
+        tide_data = prepare_tide_data_set(curw_sim_pool=curw_sim_pool, method=method, grid_id=tide_config_dict.get('1282'),
+                                          model=model, start=start, end=end)
+        outflow.extend(tide_data)
+
+        write_to_file(outflow_file_path, data=outflow)
+
+        tail_file = open(os.path.join(ROOT_DIRECTORY, "input", "outflow", "tail_150_v2.txt"), "r")
+        tail = tail_file.read()
+        tail_file.close()
+
+        append_file_to_file(outflow_file_path, file_content=tail)
+
+    except Exception as e:
+        print(traceback.print_exc())
+    finally:
+        destroy_Pool(curw_sim_pool)
+        print("Outflow generated")
+
+
 def create_dir_if_not_exists(path):
     """
     create directory(if needed recursively) or paths
@@ -228,9 +277,9 @@ def create_dir_if_not_exists(path):
 
 def usage():
     usageText = """
-    ------------------------------------------
-    Prepare outflow for Flo2D 250 & Flo2D 150
-    ------------------------------------------
+    --------------------------------------------
+    Prepare outflow for Flo2D 250, 150 & 150_v2
+    --------------------------------------------
     Usage: .\input\outflow\gen_outflow.py [-m flo2d_XXX] [-s "YYYY-MM-DD HH:MM:SS"] [-e "YYYY-MM-DD HH:MM:SS"] [-d "directory_path"] 
     [-M XXX] [-c XXXXXXXXX]
 
@@ -336,7 +385,7 @@ if __name__ == "__main__":
 
         makedir_if_not_exist_given_filepath(outflow_file_path)
 
-        flo2d_version = flo2d_model.split('_')[1]
+        flo2d_version = "_".join(flo2d_model.split('_')[1:])
 
         # Load config details and db connection params
         config = json.loads(open(os.path.join(ROOT_DIRECTORY, "input", "outflow", "config_{}.json"
@@ -354,6 +403,9 @@ if __name__ == "__main__":
                                     method=method, model=flo2d_model)
             elif flo2d_model == "flo2d_150":
                 prepare_outflow_150(outflow_file_path, start=start_time, end=end_time, tide_config_dict=tide_config_dict,
+                                    method=method, model=flo2d_model)
+            elif flo2d_model == "flo2d_150_v2":
+                prepare_outflow_150_v2(outflow_file_path, start=start_time, end=end_time, tide_config_dict=tide_config_dict,
                                     method=method, model=flo2d_model)
             metadata = {
                 "outflow": {
