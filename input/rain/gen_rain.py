@@ -8,6 +8,7 @@ import sys, re
 import json
 import csv
 import pandas as pd
+import numpy as np
 
 from db_adapter.constants import set_db_config_file_path
 from db_adapter.constants import connection as con_params
