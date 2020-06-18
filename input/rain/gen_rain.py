@@ -112,7 +112,7 @@ def check_time_format(time, model):
 def find_hash_id_of_nearest_rainfall_station(curw_obs_pool, curw_sim_pool, lat, lon):
 
     obs_connection = curw_obs_pool.connection()
-    Sim_Ts = Timeseries(curw_sim_pool)
+    Sim_Ts = Timeseries(pool=curw_sim_pool)
 
     try:
         with obs_connection.cursor() as cursor0:
