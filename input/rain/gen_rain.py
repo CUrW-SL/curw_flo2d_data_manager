@@ -157,6 +157,8 @@ def prepare_rain(curw_sim_pool, rain_file_path, curw_sim_hash_id, start_time, en
 
     timeseries = df['value'].reset_index().values.tolist()
 
+    start_time = datetime.strptime(start_time, DATE_TIME_FORMAT)
+
     rain_dat = []
 
     total_rain = 0
@@ -168,6 +170,8 @@ def prepare_rain(curw_sim_pool, rain_file_path, curw_sim_hash_id, start_time, en
         cumulative_timeseries.append(total_rain)
 
     for i in range(len(timeseries)):
+        print(type((timeseries[i][0])))
+        print(type(start_time))
         time_col = '%.3f' % (((timeseries[i][0] - start_time).total_seconds()) / 3600)
         if total_rain > 0:
             rain_col = '%.3f' % (cumulative_timeseries[i] / total_rain)
