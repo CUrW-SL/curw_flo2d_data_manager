@@ -208,7 +208,6 @@ def usage():
     -s  --start_time    Rain start time (e.g: "2019-06-05 00:00:00"). Default is 23:30:00, 3 days before today.
     -e  --end_time      Rain end time (e.g: "2019-06-05 23:30:00"). Default is 23:30:00, tomorrow.
     -d  --dir           Rain file generation location (e.g: "C:\\udp_150\\2019-09-23")
-    -i  --model_id      10m model ID, if the flo2d model is 10m model.
     -h  --hash_id       Curw sim hash id of the desired timeseries
     -E  --event_sim     Weather the rain is prepared for event simulation or not (e.g. -E, --event_sim)
     """
@@ -228,11 +227,10 @@ if __name__ == "__main__":
         output_dir = None
         file_name = 'RAIN.DAT'
         event_sim = False
-        model_ID_10m = None
 
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:e:d:i:h:E",
-                                       ["help", "flo2d_model=", "start_time=", "end_time=", "dir=", "model_id=", "hash_id=",
+            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:e:d:h:E",
+                                       ["help", "flo2d_model=", "start_time=", "end_time=", "dir=", "hash_id=",
                                         "event_sim"])
         except getopt.GetoptError:
             usage()
@@ -249,8 +247,6 @@ if __name__ == "__main__":
                 end_time = arg.strip()
             elif opt in ("-d", "--dir"):
                 output_dir = arg.strip()
-            elif opt in ("-i", "--model_id"):
-                model_ID_10m = arg.strip()
             elif opt in ("-h", "--hash_id"):
                 curw_sim_hash_id = arg.strip()
             elif opt in ("-E", "--event_sim"):
@@ -302,11 +298,8 @@ if __name__ == "__main__":
 
         if not os.path.isfile(rain_file_path):
             if pattern_10m.match(flo2d_model):
-                if model_ID_10m is None:
-                    print("Model_ID of the 10m model is not specified")
-                    exit(1)
                 config = json.loads(open(os.path.join(ROOT_DIRECTORY, "input", "rain", "config_flo2d_10.json")).read())
-                model_10m = read_attribute_from_config_file(model_ID_10m, config, True)
+                model_10m = read_attribute_from_config_file(flo2d_model, config, True)
                 lat = model_10m.get('lat')
                 lon = model_10m.get('lon')
                 print(lat, lon)
