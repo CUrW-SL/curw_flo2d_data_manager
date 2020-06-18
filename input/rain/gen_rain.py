@@ -109,6 +109,12 @@ def check_time_format(time, model):
         exit(1)
 
 
+def replace_negative_numbers_with_nan(df):
+    num = df._get_numeric_data()
+    num[num < 0] = np.nan
+    return df
+
+
 def find_hash_id_of_nearest_rainfall_station(curw_obs_pool, curw_sim_pool, lat, lon):
 
     obs_connection = curw_obs_pool.connection()
@@ -154,6 +160,8 @@ def prepare_rain(curw_sim_pool, rain_file_path, curw_sim_hash_id, start_time, en
 
     if timestep == 15:
         df = df.resample('15min', label='right', closed='right').sum()
+
+    df = replace_negative_numbers_with_nan(df)
 
     timeseries = df['value'].reset_index().values.tolist()
 
