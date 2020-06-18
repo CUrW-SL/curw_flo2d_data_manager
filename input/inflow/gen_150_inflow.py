@@ -189,7 +189,7 @@ if __name__ == "__main__":
         if event_sim:
             set_db_config_file_path(os.path.join(ROOT_DIRECTORY, 'db_adapter_config_event_sim.json'))
 
-        # Load config details and db connection params
+        # Load config details
         config = json.loads(open(os.path.join(ROOT_DIRECTORY, "input", "inflow", "config_150.json")).read())
 
         curw_sim_pool = get_Pool(host=con_params.CURW_SIM_HOST, user=con_params.CURW_SIM_USERNAME,

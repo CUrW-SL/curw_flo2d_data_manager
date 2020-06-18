@@ -64,6 +64,23 @@ def makedir_if_not_exist_given_filepath(filename):
             pass
 
 
+def read_attribute_from_config_file(attribute, config, compulsory=False):
+    """
+    :param attribute: key name of the config json file
+    :param config: loaded json file
+    :param compulsory: Boolean value: whether the attribute is must present or not in the config file
+    :return:
+
+    """
+    if attribute in config and (config[attribute]!=""):
+        return config[attribute]
+    elif compulsory:
+        print("{} not specified in config file.".format(attribute))
+        exit(1)
+    else:
+        print("{} not specified in config file.".format(attribute))
+        return None
+
 def check_time_format(time, model):
     try:
         pattern_10m = re.compile('flo2d_10_+')
@@ -92,6 +109,25 @@ def check_time_format(time, model):
         exit(1)
 
 
+def find_hash_id_of_nearest_rainfall_station(curw_obs_pool, curw_sim_pool, lat, lon):
+
+    obs_connection = curw_obs_pool.connection()
+    Sim_Ts = Timeseries(curw_sim_pool)
+
+    try:
+        with obs_connection.cursor() as cursor0:
+            cursor0.callproc('getNearestWeatherStation', (lat, lon))
+            obs_station = cursor0.fetchone()
+            obs_id = obs_station['id']
+            obs_station_name = obs_station['name']
+            grid_id = 'rainfall_{}_{}_MDPA'.format(obs_id, obs_station_name) # rainfall_100057_Naula_MDPA
+
+        return Sim_Ts.get_timeseries_id(grid_id=grid_id, method='MME')
+
+    except Exception as e:
+        traceback.print_exc()
+
+
 def prepare_rain(curw_sim_pool, rain_file_path, curw_sim_hash_id, start_time, end_time, target_model):
 
     # retrieve observed timeseries
@@ -107,6 +143,7 @@ def prepare_rain(curw_sim_pool, rain_file_path, curw_sim_hash_id, start_time, en
 
     df = pd.merge(df, ts_df, how="left", on='time')
     df.set_index('time', inplace=True)
+    df = df.dropna()
 
     if target_model == "flo2d_250":
         timestep = 5
@@ -171,6 +208,7 @@ def usage():
     -s  --start_time    Rain start time (e.g: "2019-06-05 00:00:00"). Default is 23:30:00, 3 days before today.
     -e  --end_time      Rain end time (e.g: "2019-06-05 23:30:00"). Default is 23:30:00, tomorrow.
     -d  --dir           Rain file generation location (e.g: "C:\\udp_150\\2019-09-23")
+    -i  --model_id      10m model ID, if the flo2d model is 10m model.
     -h  --hash_id       Curw sim hash id of the desired timeseries
     -E  --event_sim     Weather the rain is prepared for event simulation or not (e.g. -E, --event_sim)
     """
@@ -190,10 +228,11 @@ if __name__ == "__main__":
         output_dir = None
         file_name = 'RAIN.DAT'
         event_sim = False
+        model_ID_10m = None
 
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:e:d:h:E",
-                                       ["help", "flo2d_model=", "start_time=", "end_time=", "dir=", "hash_id=",
+            opts, args = getopt.getopt(sys.argv[1:], "h:m:s:e:d:i:h:E",
+                                       ["help", "flo2d_model=", "start_time=", "end_time=", "dir=", "model_id=", "hash_id=",
                                         "event_sim"])
         except getopt.GetoptError:
             usage()
@@ -210,6 +249,8 @@ if __name__ == "__main__":
                 end_time = arg.strip()
             elif opt in ("-d", "--dir"):
                 output_dir = arg.strip()
+            elif opt in ("-i", "--model_id"):
+                model_ID_10m = arg.strip()
             elif opt in ("-h", "--hash_id"):
                 curw_sim_hash_id = arg.strip()
             elif opt in ("-E", "--event_sim"):
@@ -217,10 +258,6 @@ if __name__ == "__main__":
 
         if event_sim:
             set_db_config_file_path(os.path.join(ROOT_DIRECTORY, 'db_adapter_config_event_sim.json'))
-
-        if curw_sim_hash_id is None:
-            print("Curw sim hash id of the desired timeseries is not specified")
-            exit(1)
 
         if flo2d_model is None:
             flo2d_model = "flo2d_250"
@@ -249,14 +286,32 @@ if __name__ == "__main__":
                                               'RAIN_{}_{}_{}.DAT'.format(flo2d_model, start_time, end_time).replace(
                                                   ' ', '_').replace(':', '-'))
 
+        if curw_sim_hash_id is None:
+            print("Curw sim hash id of the desired timeseries is not specified")
+            exit(1)
 
         curw_sim_pool = get_Pool(host=con_params.CURW_SIM_HOST, user=con_params.CURW_SIM_USERNAME,
                                  password=con_params.CURW_SIM_PASSWORD,
                                  port=con_params.CURW_SIM_PORT, db=con_params.CURW_SIM_DATABASE)
 
+        curw_obs_pool = get_Pool(host=con_params.CURW_OBS_HOST, user=con_params.CURW_OBS_USERNAME,
+                                 password=con_params.CURW_OBS_PASSWORD,
+                                 port=con_params.CURW_OBS_PORT, db=con_params.CURW_OBS_DATABASE)
+
         makedir_if_not_exist_given_filepath(rain_file_path)
 
         if not os.path.isfile(rain_file_path):
+            if pattern_10m.match(flo2d_model):
+                if model_ID_10m is None:
+                    print("Model_ID of the 10m model is not specified")
+                    exit(1)
+                config = json.loads(open(os.path.join(ROOT_DIRECTORY, "input", "rain", "config_flo2d_10.json")).read())
+                model_10m = read_attribute_from_config_file(model_ID_10m, config, True)
+                lat = model_10m.get('lat')
+                lon = model_10m.get('lon')
+                print(lat, lon)
+                curw_sim_hash_id = find_hash_id_of_nearest_rainfall_station(curw_obs_pool=curw_obs_pool, lat=lat, lon=lon)
+
             print("{} start preparing rain".format(datetime.now()))
             prepare_rain(curw_sim_pool=curw_sim_pool, rain_file_path=rain_file_path, curw_sim_hash_id=curw_sim_hash_id,
                          start_time=start_time, end_time=end_time, target_model=flo2d_model)
@@ -275,3 +330,4 @@ if __name__ == "__main__":
         traceback.print_exc()
     finally:
         destroy_Pool(pool=curw_sim_pool)
+        destroy_Pool(pool=curw_obs_pool)
