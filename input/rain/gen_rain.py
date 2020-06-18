@@ -299,7 +299,9 @@ if __name__ == "__main__":
                 lat = model_10m.get('lat')
                 lon = model_10m.get('lon')
                 print(lat, lon)
-                curw_sim_hash_id = find_hash_id_of_nearest_rainfall_station(curw_obs_pool=curw_obs_pool, lat=lat, lon=lon)
+                curw_sim_hash_id = find_hash_id_of_nearest_rainfall_station(curw_obs_pool=curw_obs_pool,
+                                                                            curw_sim_pool=curw_sim_pool,
+                                                                            lat=lat, lon=lon)
             else:
                 if curw_sim_hash_id is None:
                     print("Curw sim hash id of the desired timeseries is not specified")
