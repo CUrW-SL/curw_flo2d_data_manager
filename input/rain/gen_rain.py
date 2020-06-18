@@ -170,8 +170,6 @@ def prepare_rain(curw_sim_pool, rain_file_path, curw_sim_hash_id, start_time, en
         cumulative_timeseries.append(total_rain)
 
     for i in range(len(timeseries)):
-        print(type((timeseries[i][0])))
-        print(type(start_time))
         time_col = '%.3f' % (((timeseries[i][0] - start_time).total_seconds()) / 3600)
         if total_rain > 0:
             rain_col = '%.3f' % (cumulative_timeseries[i] / total_rain)
@@ -302,7 +300,6 @@ if __name__ == "__main__":
                 model_10m = read_attribute_from_config_file(flo2d_model, config, True)
                 lat = model_10m.get('lat')
                 lon = model_10m.get('lon')
-                print(lat, lon)
                 curw_sim_hash_id = find_hash_id_of_nearest_rainfall_station(curw_obs_pool=curw_obs_pool,
                                                                             curw_sim_pool=curw_sim_pool,
                                                                             lat=lat, lon=lon)
