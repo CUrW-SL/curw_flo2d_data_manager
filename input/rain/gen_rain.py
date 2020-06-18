@@ -282,10 +282,6 @@ if __name__ == "__main__":
                                               'RAIN_{}_{}_{}.DAT'.format(flo2d_model, start_time, end_time).replace(
                                                   ' ', '_').replace(':', '-'))
 
-        if curw_sim_hash_id is None:
-            print("Curw sim hash id of the desired timeseries is not specified")
-            exit(1)
-
         curw_sim_pool = get_Pool(host=con_params.CURW_SIM_HOST, user=con_params.CURW_SIM_USERNAME,
                                  password=con_params.CURW_SIM_PASSWORD,
                                  port=con_params.CURW_SIM_PORT, db=con_params.CURW_SIM_DATABASE)
@@ -304,6 +300,10 @@ if __name__ == "__main__":
                 lon = model_10m.get('lon')
                 print(lat, lon)
                 curw_sim_hash_id = find_hash_id_of_nearest_rainfall_station(curw_obs_pool=curw_obs_pool, lat=lat, lon=lon)
+            else:
+                if curw_sim_hash_id is None:
+                    print("Curw sim hash id of the desired timeseries is not specified")
+                    exit(1)
 
             print("{} start preparing rain".format(datetime.now()))
             prepare_rain(curw_sim_pool=curw_sim_pool, rain_file_path=rain_file_path, curw_sim_hash_id=curw_sim_hash_id,
