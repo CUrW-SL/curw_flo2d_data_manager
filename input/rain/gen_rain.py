@@ -318,7 +318,7 @@ if __name__ == "__main__":
                 }
             }
             save_metadata_to_file(input_filepath=rain_file_path, metadata=metadata)
-            print("{} completed preparing raincell".format(datetime.now()))
+            print("{} completed preparing rain".format(datetime.now()))
         else:
             print('Raincell file already in path : ', rain_file_path)
 
