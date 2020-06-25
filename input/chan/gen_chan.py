@@ -147,6 +147,7 @@ def prepare_chan(chan_file_path, start, flo2d_model):
             dwn_strm = chan_body[i+1].split()[0]
             dwn_strm_default = chan_body[i+1].split()[1]
             grid_id = "{}_{}_{}".format(flo2d_model, up_strm, dwn_strm)
+            print("grid id: ", grid_id)
             wl_id = initial_conditions.get(grid_id)[2]
             wl_id_dwn_strm = initial_conditions.get(grid_id)[3]
             offset = (datetime.strptime(start, DATE_TIME_FORMAT) + timedelta(hours=2)).strftime(DATE_TIME_FORMAT)
