@@ -151,8 +151,14 @@ def prepare_chan(chan_file_path, start, flo2d_model):
             wl_id = initial_conditions.get(grid_id)[2]
             wl_id_dwn_strm = initial_conditions.get(grid_id)[3]
             offset = (datetime.strptime(start, DATE_TIME_FORMAT) + timedelta(hours=2)).strftime(DATE_TIME_FORMAT)
-            water_level = getWL(connection=obs_connection, wl_id=wl_id, start_date=start, end_date=offset)
-            water_level_dwn_strm = getWL(connection=obs_connection, wl_id=wl_id_dwn_strm, start_date=start, end_date=offset)
+            if wl_id is not None:
+                water_level = getWL(connection=obs_connection, wl_id=wl_id, start_date=start, end_date=offset)
+            else:
+                water_level = None
+            if wl_id_dwn_strm is not None:
+                water_level_dwn_strm = getWL(connection=obs_connection, wl_id=wl_id_dwn_strm, start_date=start, end_date=offset)
+            else:
+                water_level_dwn_strm = None
 
             if wl_id_dwn_strm is None:
                 if water_level is None:
